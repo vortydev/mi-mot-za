@@ -1,0 +1,8 @@
+# Tous les fichiers .docx (peu importe dans quels sous-dossiers ils se trouvent) sont ignorés.
+**/*.docx
+
+# Tous les fichiers téléchargés via Composer (se trouvant dans le dossier vendor) sont ignorés.
+**/vendor/
+
+# Les fichiers HTML de courriels générés par PHP (se trouvant dans le dossier email) sont ignorés.
+**/email/
