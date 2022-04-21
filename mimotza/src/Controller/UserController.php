@@ -56,8 +56,13 @@ class UserController extends AbstractController
     }
 
     #[Route('/inscription', name: 'inscription')]
-    public function inscription(): Response
+    public function inscription(ManagerRegistry $doctrine): Response
     {
+        $entityManager = $doctrine->getManager();
+        $userManager = $entityManager->getRepository(Utilisateur::class);
+
+        $userList = $userManager->findAll();
+
         $formInscription = $this->createFormBuilder()
             ->add('prenom', TextType::class, ['label' => 'Prénom'])
             ->add('nom', TextType::class, ['label' => 'Nom'])
@@ -83,7 +88,6 @@ class UserController extends AbstractController
         $entityManager = $doctrine->getManager();
         $roleManager = $entityManager->getRepository(Role::class);
         $statutManager = $entityManager->getRepository(Statut::class);
-        // $userManager = $entityManager->getRepository(Utilisateur::class);
 
         // generate objects
         $roleUsager = $roleManager->findOneBy(['id' => 1]);
@@ -95,7 +99,7 @@ class UserController extends AbstractController
             ->setNom($post['form']['nom'])
             ->setEmail($post['form']['email'])
             ->setUsername($post['form']['username'])
-            ->setMdp($post['form']['mdp'])
+            ->setMdp(password_hash($post['form']['mdp'], PASSWORD_DEFAULT))
             ->setAvatar(null)
             ->setIdRole($roleUsager)
             ->setIdStatut($statutInactif)
