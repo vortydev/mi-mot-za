@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Component\Validator\Constraints\DateTime;
+
 class EventController extends AbstractController
 {
     #[Route('/event', name: 'app_event')]
@@ -62,7 +64,7 @@ class EventController extends AbstractController
                 $event->setIdUser($user)
                     ->setIdEvent($eventType)
                     ->setDetail($post['mess'])
-                    ->setDateEmission($post['date']);
+                    ->setDateEmission(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
 
                 // Sauvegarde l'événement
                 $entityManager->persist($event);

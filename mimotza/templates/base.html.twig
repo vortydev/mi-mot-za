@@ -30,7 +30,7 @@
                 httpRequest.open('POST', '/event');        // à changer : url
                 httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-                httpRequest.send("userId=" + userId + "&eventType=" + eventType + "&mess=" + mess + "&date=" + date.toISOString());
+                httpRequest.send("userId=" + userId + "&eventType=" + eventType + "&mess=" + mess);
             }
 
         </script>
