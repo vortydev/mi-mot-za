@@ -17,7 +17,12 @@ use Symfony\Component\Validator\Constraints\Regex;
 
 use Doctrine\Persistence\ManagerRegistry;
 
+use App\Entity\Role;
+use App\Repository\RoleRepository;
+use App\Entity\Statut;
+use App\Repository\StatutRepository;
 use App\Entity\Utilisateur;
+use App\Repository\UtilisateurRepository;
 
 class UserController extends AbstractController
 {
@@ -29,40 +34,6 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/inscription', name: 'inscription')]
-    public function inscription(): Response
-    {
-        $form = $this->createFormBuilder()
-            ->add('prenom', TextType::class, ['label' => 'Prénom'])
-            ->add('nom', TextType::class, ['label' => 'Nom'])
-            ->add('email', EmailType::class, [
-                'label' => 'Email',
-                'constraints' => [
-                    new NotBlank(),
-                ]
-            ])
-            ->add('username', TextType::class, ['label' => 'Nom d\'utilisateur'])
-            ->add('mdp', PasswordType::class, ['label' => 'Mot de passe'])
-            ->add('submit', SubmitType::class, ['label' => 'S\'inscrire!'])
-            ->setAction($this->generateUrl('confirmation'))
-            ->getForm();
-
-        return $this->renderForm('user/inscription.html.twig', [
-            'controller_name' => 'UserController',
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/confirmation', name: 'confirmation')]
-    public function confirmation() : Response {
-        $request = Request::createFromGlobals();
-        $form = $request->get('form');
-
-        return $this->render('user/confirmation.html.twig', [
-            'form' => $form,
-        ]);
-    }
-    
     #[Route('/user/{id}', name: 'particular_user')]
     public function showUser(ManagerRegistry $regis, $id): Response
     {
@@ -81,6 +52,62 @@ class UserController extends AbstractController
         return $this->render('user/user.html.twig', [
             'controller_name' => 'UserController',
             'user' => $user
+        ]);
+    }
+
+    #[Route('/inscription', name: 'inscription')]
+    public function inscription(): Response
+    {
+        $formInscription = $this->createFormBuilder()
+            ->add('prenom', TextType::class, ['label' => 'Prénom'])
+            ->add('nom', TextType::class, ['label' => 'Nom'])
+            ->add('email', EmailType::class, ['label' => 'Email'])
+            ->add('username', TextType::class, ['label' => 'Nom d\'utilisateur'])
+            ->add('mdp', PasswordType::class, ['label' => 'Mot de passe'])
+            ->add('submit', SubmitType::class, ['label' => 'S\'inscrire!'])
+            ->setAction($this->generateUrl('adduser'))
+            ->getForm();
+
+        return $this->render('user/inscription.html.twig', [
+            'controller_name' => 'UserController',
+            'form' => $formInscription->createView(),
+        ]);
+    }
+
+    #[Route('/adduser', name: 'adduser')]
+    public function addUser(Request $request, ManagerRegistry $doctrine): Response {
+        // get post
+        $post = $request->request->all();
+
+        // init managers
+        $entityManager = $doctrine->getManager();
+        $roleManager = $entityManager->getRepository(Role::class);
+        $statutManager = $entityManager->getRepository(Statut::class);
+        // $userManager = $entityManager->getRepository(Utilisateur::class);
+
+        // generate objects
+        $roleUsager = $roleManager->findOneBy(['id' => 1]);
+        $statutInactif = $statutManager->findOneBy(['id' => 1]);
+        $user = new Utilisateur;
+
+        // load user data
+        $user->setPrenom($post['form']['prenom'])
+            ->setNom($post['form']['nom'])
+            ->setEmail($post['form']['email'])
+            ->setUsername($post['form']['username'])
+            ->setMdp($post['form']['mdp'])
+            ->setAvatar(null)
+            ->setIdRole($roleUsager)
+            ->setIdStatut($statutInactif)
+            ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
+
+        // save user
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $this->render('user/confirmation.html.twig', [
+            'controller_name' => $user->getUsername(),
+            'form' => $post['form'],
         ]);
     }
 }
