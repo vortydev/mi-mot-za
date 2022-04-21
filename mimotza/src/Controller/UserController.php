@@ -28,11 +28,10 @@ class UserController extends AbstractController
 
         $user = array('username'=>'bob',
                         'avatar'=>'none',
-                        'partie'=>'6',
-                        'partieWin'=>'3',
+                        'parties'=>array(array('id'=>'1','win'=>true,'temps'=>'23:55:10'),array('id'=>'2','win'=>false, 'temps'=>'1:05:55')),
                         'temps'=>'4h',
                         'dateCreation'=>'21/04/2022',
-                        'statut'=>'Banni'
+                        'statut'=>array('id'=>'1', 'statut'=>'Banni')
                     );
 
         return $this->render('user/user.html.twig', [
