@@ -15,6 +15,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
+use Doctrine\Persistence\ManagerRegistry;
+
+use App\Entity\Utilisateur;
+
 class UserController extends AbstractController
 {
     #[Route('/user', name: 'user')]
@@ -56,6 +60,27 @@ class UserController extends AbstractController
 
         return $this->render('user/confirmation.html.twig', [
             'form' => $form,
+        ]);
+    }
+    
+    #[Route('/user/{id}', name: 'particular_user')]
+    public function showUser(ManagerRegistry $regis, $id): Response
+    {
+        $userRepository = $regis->getRepository(Utilisateur::class);
+        //$user = $userRepository->findOneBy(['id'=>$id]);
+
+        $user = array('username'=>'bob',
+                        'avatar'=>'none',
+                        'partie'=>'6',
+                        'partieWin'=>'3',
+                        'temps'=>'4h',
+                        'dateCreation'=>'21/04/2022',
+                        'statut'=>'Banni'
+                    );
+
+        return $this->render('user/user.html.twig', [
+            'controller_name' => 'UserController',
+            'user' => $user
         ]);
     }
 }
