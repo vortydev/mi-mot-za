@@ -21,7 +21,8 @@ class EventController extends AbstractController
     #[Route('/event', name: 'app_event')]
     public function event(Request $request, ManagerRegistry $doctrine): Response
     {
-        $response = "";
+        $code = 200;
+        $error = null;
 
         if ($request->isMethod('post')) {
 
@@ -39,15 +40,19 @@ class EventController extends AbstractController
             $user = $userRepos->findOneBy(['id' => $post['userId']]);
             $eventType = $eventTypeRepos->findOneBy(['id' => $post['eventType']]);
 
+            $response = json_encode($post);
+
             // Si l'utilisateur est inexistant
             if (!$user) {
                 http_response_code(400);
-                $response = '{"erreur": "Aucun utilisateur a l\'identifiant ' . $post['userId'] . '"}';
+                $code = 400;
+                $error = "Aucun utilisateur possède l\'identifiant" . $post['userId'];
             }
             // Sinon si l'événement n'existe pas
             elseif (!$eventType) {
                 http_response_code(400);
-                $response = '{"erreur": "Aucun type d\'événement a l\'identifiant ' . $post['eventType'] . '"}';
+                $code = 400;
+                $error = "Aucun type d\'événement possède l\'identifiant " . $post['eventType'];
             }
             else {
                 // Créé l'événement à partir du post reçu
@@ -62,11 +67,12 @@ class EventController extends AbstractController
                 // Sauvegarde l'événement
                 $entityManager->persist($event);
                 $entityManager->flush();
-
-                $response = $post;
             }
             
             // Affiche le message d'erreur
+            if ($error) {
+                $response .= "\nCode: " . $code . "\nErreur: " . $error;
+            }
             echo $response;
             exit;
         }
