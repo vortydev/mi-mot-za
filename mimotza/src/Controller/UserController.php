@@ -29,7 +29,6 @@ class UserController extends AbstractController
         $user = array('username'=>'bob',
                         'avatar'=>'none',
                         'parties'=>array(array('id'=>'1','win'=>true,'temps'=>'23:55:10'),array('id'=>'2','win'=>false, 'temps'=>'1:05:55')),
-                        'temps'=>'4h',
                         'dateCreation'=>'21/04/2022',
                         'statut'=>array('id'=>'1', 'statut'=>'Banni')
                     );
