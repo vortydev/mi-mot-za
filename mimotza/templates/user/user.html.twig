@@ -9,8 +9,7 @@
 </style>
 <!--gotta fix the year:month:day count-->
     {% set win = 0 %}
-    {% set time = date('\-0001-12-31 0:0:0') %}
-    {{time|date("Y:m:d:H:i:s")}}
+    {% set time = date('0000-01-01 0:0:0') %}
     {% for partie in user.parties %}
         {% if partie.win == true %}
             {% set win = win + 1 %}
@@ -25,7 +24,7 @@
     <div class="stat">
         <span>Nombre de parties jouées: {{user.parties|length}}</span><br>
         <span>Nombre de parties gagnées: {{win}}</span><br>
-        <span>Temps de jeu: {{time|date("Y:m:d:H:i:s")}}</span><br>
+        <span>Temps de jeu: {{time|date("Y:")}}{{(time|date("m"))-1}}:{{(time|date("d"))-1}}{{time|date(":H:i:s")}}</span><br>
         <span>Date de création du compte: {{user.dateCreation}}</span><br>
         <span>État du compte: {{user.statut.statut}}</span><br>
     </div>
