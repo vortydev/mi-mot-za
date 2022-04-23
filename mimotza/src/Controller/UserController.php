@@ -1,5 +1,18 @@
 <?php
-
+/****************************************
+Fichier : UserController.php
+Auteur : Isabelle Rioux, Étienne Ménard
+Fonctionnalité : Classe UserController pour la gestion des joueurs
+Date : 21/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+Date: 21/04/2022 Nom: Isabelle Rioux Description: Ajout de la fonction showUser
+Date 2 Nom 2 Description 2
+...
+=========================================================
+****************************************/
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
