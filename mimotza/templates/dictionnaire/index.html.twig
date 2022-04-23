@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion du jeu{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; border:2px solid black; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+
+    <div class="example-wrapper">
+        <h1>Gestionnaire des mots</h1>
+        {{ form(form) }}
+
+    </div>
+
+    <div class="example-wrapper">
+    <ul>
+        <h4> Mots dans le dictionnaire: </h4>
+        {% for element in listMots %}
+        <li>{{element.mot}}</li>
+        {% endfor %}
+
+    </div>
+
+    <div class="example-wrapper">
+    <ul>
+        <h4> Mots proposés: </h4>
+        {% for element in listeMotsSuggere %}
+            <li>{{element.mot_suggere}}</li>
+        {% endfor %}
+
+    </div>
+{% endblock %}
+
