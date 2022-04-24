@@ -14,6 +14,7 @@ Date Nom Approuvé
 Historique de modifications :
 Date: 21/04/2022 Nom: Isabelle Rioux Description: Gestion des variables de statistiques
 Date: 22/04/2022 Nom: Isabelle Rioux Description: Correction de l'affichage du temps de jeu
+Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement avec la base de données
 ...
 =========================================================
 ****************************************/-->
@@ -39,8 +40,8 @@ Date: 22/04/2022 Nom: Isabelle Rioux Description: Correction de l'affichage du t
         <span>Nombre de parties jouées: {{user.parties|length}}</span><br>
         <span>Nombre de parties gagnées: {{win}}</span><br>
         <span>Temps de jeu: {{time|date("Y:")}}{{(time|date("m"))-1}}:{{(time|date("d"))-1}}{{time|date(":H:i:s")}}</span><br>
-        <span>Date de création du compte: {{user.dateCreation}}</span><br>
-        <span>État du compte: {{user.statut.statut}}</span><br>
+        <span>Date de création du compte: {{user.dateCreation|date("d/m/Y")}}</span><br>
+        <span>État du compte: {{user.idStatut.statut}}</span><br>
     </div>
     
 </div>

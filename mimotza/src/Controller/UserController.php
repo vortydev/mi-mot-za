@@ -9,7 +9,7 @@ Date Nom Approuvé
 =========================================================
 Historique de modifications :
 Date: 21/04/2022 Nom: Isabelle Rioux Description: Ajout de la fonction showUser
-Date 2 Nom 2 Description 2
+Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement de l'affichage d'un joueur avec la base de données
 ...
 =========================================================
 ****************************************/
@@ -51,14 +51,7 @@ class UserController extends AbstractController
     public function showUser(ManagerRegistry $regis, $id): Response
     {
         $userRepository = $regis->getRepository(Utilisateur::class);
-        //$user = $userRepository->findOneBy(['id'=>$id]);
-
-        $user = array('username'=>'bob',
-                        'avatar'=>'none',
-                        'parties'=>array(array('id'=>'1','win'=>true,'temps'=>'23:55:10'),array('id'=>'2','win'=>false, 'temps'=>'1:05:55')),
-                        'dateCreation'=>'21/04/2022',
-                        'statut'=>array('id'=>'1', 'statut'=>'Banni')
-                    );
+        $user = $userRepository->findOneBy(['id'=>$id]);
 
         return $this->render('user/user.html.twig', [
             'controller_name' => 'UserController',
