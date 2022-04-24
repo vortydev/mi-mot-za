@@ -21,6 +21,7 @@ class AjouterMotType extends AbstractType
        
         $builder
             ->add('mot', TextType::class,[
+                'attr' => ['pattern'=> '[A-Za-z]{5}'],
                 'label' => ' mot :',
                 'required'=> true
             ])

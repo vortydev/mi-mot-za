@@ -24,7 +24,7 @@
     <ul>
         <h4> Mots dans le dictionnaire: </h4>
         {% for element in listMots %}
-        <li>{{element.mot}}</li>
+        <li>{{element.mot}} <a href="/dictionnaire/{{element.id}}">Statistiques</a></li>
         {% endfor %}
 
     </div>
@@ -33,7 +33,7 @@
     <ul>
         <h4> Mots proposés: </h4>
         {% for element in listeMotsSuggere %}
-            <li>{{element.mot_suggere}}</li>
+            <li>{{element.mot_suggere}}<a href="/dictionnaire?ajout={{element.mot_suggere}}">Statistiques</a><a href="/dictionnaire?DelSuggestioon={{element.mot_suggere}}">Statistiques</a></li>
         {% endfor %}
 
     </div>
