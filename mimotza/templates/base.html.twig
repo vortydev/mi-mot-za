@@ -23,22 +23,15 @@
 
                 httpRequest.onreadystatechange = function() {
                     if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                        if (httpRequest.status === 200) {
-                            alert("userId=" + userId + "\neventType=" + eventType + "\nmess=" + mess + "\ndate=" + date.toISOString());
-                        }
-                        else {
-                            alert('Il y a eu un problème avec la requête.');
-                        }
+                        alert(httpRequest.responseText);
                     }
                 };
 
                 httpRequest.open('POST', '/event');        // à changer : url
                 httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-                httpRequest.send("userId=" + userId + "&eventType=" + eventType + "&mess=" + mess + "&date=" + date.toISOString());
+                httpRequest.send("userId=" + userId + "&eventType=" + eventType + "&mess=" + mess);
             }
-
-            sendEvent(1, 5, "MESSAGE");
 
         </script>
         {% block body %}{% endblock %}
