@@ -3,5 +3,14 @@
 {% block title %}Hello EventController!{% endblock %}
 
 {% block body %}
-
+    <input type="button" id="sendEvent" value="Send Event">
+    <script>
+        let sendEventBut = document.getElementById("sendEvent");
+        
+        if (sendEventBut) {
+            sendEventBut.addEventListener('click', function() {
+                sendEvent(1, 5, "MESSAGE");
+            });
+        }
+    </script>
 {% endblock %}
