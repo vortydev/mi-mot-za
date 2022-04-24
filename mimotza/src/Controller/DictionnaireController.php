@@ -24,13 +24,13 @@ class DictionnaireController extends AbstractController
         $listeMotsSuggere = $doctrine->getRepository(Suggestion::class)->findALL();
 
         $mot = new Mot;
-        $form = $this->createform(AjouterMotType::class,$mot);
+        $form = $this->createform(AjouterMotType::class, $mot);
         $form->handleRequest($request);
         if($request->isMethod('post') && $form->isValid()){
             $em->persist($mot);
             $em->flush();
             $session = $request->getSession();
-            $session->getFlashbag()->add('action','Le mot a été ajouté');
+            $session->getFlashbag()->add('action',"Le mot ".$mot->getMot()." a été ajouté");
             return $this->redirect($this->generateURL('app_dictionnaire'));
         }
         return $this->render('dictionnaire/index.html.twig', [

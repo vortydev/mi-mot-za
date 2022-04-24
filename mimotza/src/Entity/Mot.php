@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\MotRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Langue;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MotRepository::class)]
 class Mot
@@ -12,6 +14,7 @@ class Mot
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
+
 
     #[ORM\Column(type: 'string', length: 5)]
     private $mot;
@@ -23,6 +26,9 @@ class Mot
     #[ORM\Column(type: 'datetime')]
     private $dateAjout;
 
+
+   
+  
     public function getId(): ?int
     {
         return $this->id;

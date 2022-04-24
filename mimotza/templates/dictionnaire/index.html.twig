@@ -9,7 +9,13 @@
     </style>
 
     <div class="example-wrapper">
+
         <h1>Gestionnaire des mots</h1>
+        {% for message in app.flashes('action') %}
+    
+            <h2>{{ message }}</h2>
+
+        {% endfor %}
         {{ form(form) }}
 
     </div>
