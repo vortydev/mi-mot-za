@@ -64,7 +64,9 @@ class EventController extends AbstractController
                 $date = date('Y-m-d H:i:s');
                 $mess = $post['mess'];
 
-                $mess = preg_replace("/\[date\[/", $date, $mess);
+                //echo 'Message: ' . $mess . "\nDate: $date\n";
+                $mess = preg_replace("/\[date\]/", $date, $mess);
+                //echo 'Message: ' . $mess . "\n";
 
                 // Place les infos dans l'événement
                 $event->setIdUser($user)
