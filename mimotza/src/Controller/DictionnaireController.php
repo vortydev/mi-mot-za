@@ -23,7 +23,7 @@ class DictionnaireController extends AbstractController
         $em = $doctrine->getManager();
         $listeMots = $doctrine->getRepository(Mot::class)->findALL();
 
-        //Cherhce les mots suggeres qui ont letat en attente
+        //Cherhce les mots suggeres qui ont letat en attente (1)
         $listeMotsSuggere = $doctrine->getRepository(Suggestion::class)->findBy(array('idEtatSuggestion' => 1));
 
         $mot = new Mot;
@@ -65,7 +65,7 @@ class DictionnaireController extends AbstractController
     }
 
     #[Route('/GestionDuJeu/ajoutSuggestion', name: 'AjoutSuggestion')]
-    public function createProduct(ManagerRegistry $doctrine, Request $request): Response
+    public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request): Response
     {
         $id = $_GET['id'];
         $em=$doctrine->getManager();
@@ -103,9 +103,8 @@ class DictionnaireController extends AbstractController
             $em->flush();
             $session->getFlashBag()->add('delete', "le mot suggeré : ".$suggestion->getMotSuggere()." a été accepté");
         }
-
-            
         return $this->redirect($this->generateURL('app_dictionnaire'));
     }
+
 
 }

@@ -21,20 +21,15 @@
     <body>
         <script>
             function sendEvent(userId, eventType, mess) {
-
                 date = new Date();
-
                 httpRequest = new XMLHttpRequest();
-
                 httpRequest.onreadystatechange = function() {
                     if (httpRequest.readyState === XMLHttpRequest.DONE) {
                         alert(httpRequest.responseText);
                     }
                 };
-
                 httpRequest.open('POST', '/event');        // à changer : url
                 httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
                 httpRequest.send("userId=" + userId + "&eventType=" + eventType + "&mess=" + mess);
             }
 
