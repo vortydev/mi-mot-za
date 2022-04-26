@@ -125,12 +125,12 @@ class UserController extends AbstractController
 
         $query->getQuery()->execute();
         if($user->getIdStatut()->getId() == 3){
-            return $this->render('user/ban.html.twig', [
+            return $this->render('user/unban.html.twig', [
                 'controller_name' => 'UserController',
                 'user' => $user
             ]);
         }else{
-            return $this->render('user/unban.html.twig', [
+            return $this->render('user/ban.html.twig', [
                 'controller_name' => 'UserController',
                 'user' => $user
             ]);
