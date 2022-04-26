@@ -6,6 +6,8 @@ use App\Repository\MotRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Langue;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MotRepository::class)]
 class Mot
@@ -14,6 +16,7 @@ class Mot
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
+
 
     #[ORM\Column(type: 'string', length: 5)]
     private $mot;

@@ -5,7 +5,7 @@
 {% block body %}
 <!-- /****************************************
 Fichier : index.html.twig
-Auteur : Isabelle Rioux
+Auteurs : Isabelle Rioux, Étienne Ménard
 Fonctionnalité : Template d'affichage de la liste d'utilisateurs
 Date : 21/04/2022
 Vérification :
@@ -13,20 +13,17 @@ Date Nom Approuvé
 =========================================================
 Historique de modifications :
 Date: 25/04/2022 Nom: Isabelle Rioux Description: Affichage de la liste de joueurs
-Date: 26/04/2022 Nom: Isabelle Rioux Description: Ajout de la recherche d'un joureur
+Date: 26/04/2022 Nom: Isabelle Rioux Description: Ajout de la recherche d'un joueur
+Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
 ...
 =========================================================
 ****************************************/-->
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
+<main>
     <h1>Liste des joueurs</h1>
     {{form(form_user)}}
     {% for user in list_users %}
         {{user.username}}: {{user.idStatut.statut}} <a href="/user/{{user.id}}">Afficher le profil</a>
     {% endfor %}
-</div>
+</main>
 {% endblock %}

@@ -5,7 +5,7 @@
 {% block body %}
 <!-- /****************************************
 Fichier : ban.html.twig
-Auteur : Isabelle Rioux
+Auteurs : Isabelle Rioux, Étienne Ménard
 Fonctionnalité : Template d'affichage d'un seul utilisateur
 Date : 26/04/2022
 Vérification :
@@ -13,14 +13,12 @@ Date Nom Approuvé
 =========================================================
 Historique de modifications :
 Date: 26/04/2022 Nom: Isabelle Rioux Description: affichage si un joueur est banni
+Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
 ...
 =========================================================
 ****************************************/-->
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-    <h1>{{user.username}} a été banni</h1>
-    
-</div>
+
+<main>
+<h1>{{user.username}} a été banni</h1>
+</main>
 {% endblock %}

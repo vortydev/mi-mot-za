@@ -30,7 +30,7 @@ class EventController extends AbstractController
 
             // Récupère le post
             $post = $request->request->all();
-
+        
             // Instancie l'entity manager
             $entityManager = $doctrine->getManager();
 
@@ -60,11 +60,19 @@ class EventController extends AbstractController
                 // Créé l'événement à partir du post reçu
                 $event = new Historique;
 
+                // Sauvegarde la date d'aujourd'hui
+                $date = date('Y-m-d H:i:s');
+                $mess = $post['mess'];
+
+                //echo 'Message: ' . $mess . "\nDate: $date\n";
+                $mess = preg_replace("/\[date\]/", $date, $mess);
+                //echo 'Message: ' . $mess . "\n";
+
                 // Place les infos dans l'événement
                 $event->setIdUser($user)
                     ->setIdEvent($eventType)
-                    ->setDetail($post['mess'])
-                    ->setDateEmission(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
+                    ->setDetail($mess)
+                    ->setDateEmission(date_create_from_format('Y-m-d H:i:s', $date));
 
                 // Sauvegarde l'événement
                 $entityManager->persist($event);

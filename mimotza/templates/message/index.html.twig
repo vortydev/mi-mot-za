@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MessageController!{% endblock %}
+
+{% block body %}
+
+<main>
+<h1>Gestionnaire des mots</h1>
+
+<ul>
+    {% for element in listeMessages %}
+    <li> {{element.contenu}}</li>
+    {% endfor %}
+</ul>
+</main>
+    
+{% endblock %}

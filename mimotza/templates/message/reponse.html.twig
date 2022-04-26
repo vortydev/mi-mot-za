@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MessageController!{% endblock %}
+
+{% block body %}
+<main>
+{% for category in post %}
+    <h1>{{ category }} </h1>
+{% endfor %}
+</main>
+{% endblock %}
