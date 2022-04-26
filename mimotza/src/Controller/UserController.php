@@ -1,5 +1,19 @@
 <?php
-
+/****************************************
+Fichier : UserController.php
+Auteur : Isabelle Rioux, Étienne Ménard
+Fonctionnalité : Classe UserController pour la gestion des joueurs
+Date : 21/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+Date: 21/04/2022 Nom: Isabelle Rioux Description: Ajout de la fonction showUser
+Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement de l'affichage d'un joueur avec la base de données
+Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur
+...
+=========================================================
+****************************************/
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -9,6 +23,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,32 +43,65 @@ use Exception;
 class UserController extends AbstractController
 {
     #[Route('/user', name: 'user')]
-    public function index(): Response
+    public function index(ManagerRegistry $regis): Response
     {
+        $form=$this->createFormBuilder()
+        ->setAction($this->generateUrl('result'))
+        ->setMethod('POST')
+        ->add('username', SearchType::class, ['label'=>'Rechercher un joueur'])
+        ->add('envoyer', SubmitType::class, ['label'=>'Envoyer'])
+        ->getForm();
+        
+        $userRepository = $regis->getRepository(Utilisateur::class);
+        $users = $userRepository->findAll();
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
+            'list_users' => $users,
+            'form_user'=>$form->createView()
         ]);
     }
 
     #[Route('/user/{id}', name: 'particular_user')]
     public function showUser(ManagerRegistry $regis, $id): Response
     {
+        //deal with ban dans fonction si ban set inactif else set ban
         $userRepository = $regis->getRepository(Utilisateur::class);
-        //$user = $userRepository->findOneBy(['id'=>$id]);
+        $user = $userRepository->findOneBy(['id'=>$id]);
 
-        $user = array('username'=>'bob',
-                        'avatar'=>'none',
-                        'partie'=>'6',
-                        'partieWin'=>'3',
-                        'temps'=>'4h',
-                        'dateCreation'=>'21/04/2022',
-                        'statut'=>'Banni'
-                    );
+        if (isset($user)){
+            return $this->render('user/user.html.twig', [
+                'controller_name' => 'UserController',
+                'user' => $user
+            ]);
+        }
+        else{
+            return $this->render('user/error.html.twig', [
+                'controller_name' => 'UserController',
+            ]);
+        }
+        
+    }
 
-        return $this->render('user/user.html.twig', [
-            'controller_name' => 'UserController',
-            'user' => $user
-        ]);
+    #[Route('/resultuser', name: 'result')]
+    public function showResearchResult(ManagerRegistry $regis): Response
+    {
+        $request = Request::createFromGlobals();
+        $username = $request->get('form');
+        //deal with ban dans fonction si ban set inactif else set ban
+        $userRepository = $regis->getRepository(Utilisateur::class);
+        $user = $userRepository->findOneBy(['username'=>$username]);
+
+        if (isset($user)){
+            return $this->render('user/user.html.twig', [
+                'controller_name' => 'UserController',
+                'user' => $user
+            ]);
+        }
+        else{
+            return $this->render('user/error.html.twig', [
+                'controller_name' => 'UserController',
+            ]);
+        }
     }
 
     // DEPRECATED
