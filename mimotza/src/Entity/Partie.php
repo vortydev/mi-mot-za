@@ -29,6 +29,10 @@ class Partie
     #[ORM\Column(type: 'datetime')]
     private $dateEmission;
 
+    #[ORM\ManyToOne(targetEntity: Mot::class, inversedBy: 'parties')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $mot;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +94,18 @@ class Partie
     public function setDateEmission(\DateTimeInterface $dateEmission): self
     {
         $this->dateEmission = $dateEmission;
+
+        return $this;
+    }
+
+    public function getMot(): ?Mot
+    {
+        return $this->mot;
+    }
+
+    public function setMot(?Mot $mot): self
+    {
+        $this->mot = $mot;
 
         return $this;
     }

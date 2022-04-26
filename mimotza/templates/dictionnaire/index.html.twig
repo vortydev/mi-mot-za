@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion du jeu{% endblock %}
+
+{% block body %}
+    
+
+    <div class="example-wrapper">
+       
+        {% if app.flashes('action') %}
+            <script>
+                sendEvent(1, 1, "test");
+            </script>
+        {% endif %}
+        
+        <h1>Gestionnaire des mots</h1>
+        {% for message in app.flashes('action') %}
+            <h2>{{ message }}</h2>
+        {% endfor %}
+        {{ form(form) }}
+
+    </div>
+
+    <div class="example-wrapper">
+        <h4> Mots dans le dictionnaire: </h4>
+        <ul>
+            {% for element in listMots %}
+            <li> {{element.mot}}
+            <button type="button" class="btn btn-primary" onclick="window.location.href='/GestionDuJeu/{{element.id}}'">Statistiques</button>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="example-wrapper">
+    <h4> Mots proposés: </h4>
+        {% if app.flashes('delete') %}
+            <script>
+                sendEvent(1, 1, "testdelete");
+            </script>
+        {% endif %}
+        {% for message in app.flashes('delete') %}
+            <h2>{{ message }}</h2>
+        {% endfor %}
+        <ul>
+            {% for element in listeMotsSuggere %}
+                <li>{{element.motsuggere}}
+                <button type="button" class="btn btn-success" onclick="window.location.href='/GestionDuJeu/acceptSuggestion?id={{element.id}}'">Accepter</button>
+                <button type="button" class="btn btn-danger" onclick="window.location.href='/GestionDuJeu/refuseSuggestion?id={{element.id}}'">Refuser</button>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script>
+        sendEvent({{ app.user }},7, "Ajout d'un mot ");
+    </script>
+{% endblock %}
+
