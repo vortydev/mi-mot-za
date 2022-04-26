@@ -3,20 +3,46 @@
 {% block title %}{{user.username}}{% endblock %}
 
 {% block body %}
+<!-- /****************************************
+Fichier : user.html.twig
+Auteur : Isabelle Rioux
+Fonctionnalité : Template d'affichage d'un seul utilisateur
+Date : 21/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+Date: 21/04/2022 Nom: Isabelle Rioux Description: Gestion des variables de statistiques
+Date: 22/04/2022 Nom: Isabelle Rioux Description: Correction de l'affichage du temps de jeu
+Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement avec la base de données
+Date: 26/04/2022 Nom: Isabelle Rioux Description: Modification du bouton de bannissement
+...
+=========================================================
+****************************************/-->
 <style>
     .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
+    {% set win = 0 %}
+    {% set time = date('0000-01-01 0:0:0') %}
+    {% for partie in user.parties %}
+        {% if partie.win == true %}
+            {% set win = win + 1 %}
+        {% endif %}
+        {% set temp = date(partie.temps)%}
+        {% set time = time|date_modify("+" ~ temp|date("H\\h\\o\\u\\r +i\\m\\i\\n +s\\s\\e\\c")) %}
+    {% endfor %}
 <div class="example-wrapper">
     <h1>Profil de {{user.username}}</h1>
     <img src="{{user.avatar}}" alt="Il n'y a pas d'avatar pour ce joueur" width="500" height="600"/><br>
-    <button type="button">Ban/Unban</button>
     <div class="stat">
-        <span>Nombre de parties jouées: {{user.partie}}</span><br>
-        <span>Nombre de parties gagnées: {{user.partieWin}}</span><br>
-        <span>Temps de jeu: {{user.temps}}</span><br>
-        <span>Date de création du compte: {{user.dateCreation}}</span><br>
-        <span>État du compte: {{user.statut}}</span><br>
+        <span>Nombre de parties jouées: {{user.parties|length}}</span><br>
+        <span>Nombre de parties gagnées: {{win}}</span><br>
+        <span>Temps de jeu: {{time|date("Y:")}}{{(time|date("m"))-1}}:{{(time|date("d"))-1}}{{time|date(":H:i:s")}}</span><br>
+        <span>Date de création du compte: {{user.dateCreation|date("d/m/Y")}}</span><br>
+        <span>État du compte: {{user.idStatut.statut}}</span><br>
     </div>
+    <button type="button" onclick="window.location.href='/user/{{user.id}}/ban'">Ban/Unban</button>
+    
 </div>
 {% endblock %}
