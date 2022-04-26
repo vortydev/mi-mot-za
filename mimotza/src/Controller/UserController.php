@@ -9,26 +9,28 @@ Date Nom Approuvé
 =========================================================
 Historique de modifications :
 Date: 21/04/2022 Nom: Isabelle Rioux Description: Ajout de la fonction showUser
+Date: 21/04/2022 Nom: Étienne Ménard Description: Ajout de la fonction addUser
 Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement de l'affichage d'un joueur avec la base de données
+<<<<<<< HEAD
 Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur et du bannissement
 ...
+=======
+Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur
+Date: 26/04/2022 Nom: Étienne Ménard Description: Insertion d'utilisateurs dans la BD à partir d'un tableau JSON
+>>>>>>> etienne
 =========================================================
 ****************************************/
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Regex;
 
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -163,37 +165,94 @@ class UserController extends AbstractController
 
     #[Route('/adduser', name: 'adduser')]
     public function addUser(Request $request, ManagerRegistry $doctrine): Response {
-        // get post
-        $post = $request->request->all();
+        // get post TEMP
+        // $post = $request->request->all();
+        // $encode = json_encode(array($post['form'], $post['form']));
 
         // init managers
         $entityManager = $doctrine->getManager();
         $roleManager = $entityManager->getRepository(Role::class);
         $statutManager = $entityManager->getRepository(Statut::class);
+        $userManager = $entityManager->getRepository(Utilisateur::class);
 
         // generate objects
         $roleUsager = $roleManager->findOneBy(['id' => 1]);
         $statutInactif = $statutManager->findOneBy(['id' => 1]);
-        $user = new Utilisateur;
 
-        // load user data
-        $user->setPrenom($post['form']['prenom'])
-            ->setNom($post['form']['nom'])
-            ->setEmail($post['form']['email'])
-            ->setUsername($post['form']['username'])
-            ->setMdp(password_hash($post['form']['mdp'], PASSWORD_DEFAULT))
-            ->setAvatar(null)
-            ->setIdRole($roleUsager)
-            ->setIdStatut($statutInactif)
-            ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
+        // TEMP
+        $liste = array(
+            array(
+                'prenom' => 'Étienne',
+                'nom' => 'Ménard',
+                'email' => 'etienne.dmenard@gmail.com',
+                'username' => 'vorty',
+                'mdp' => 'abc123',
+                'role' => 2,
+                'statut' => 2,
+            ),
+            array(
+                'prenom' => 'Isabelle',
+                'nom' => 'Rioux',
+                'email' => 'isabelle.rioux@gmail.com',
+                'username' => 'isa',
+                'mdp' => 'abc123'
+            ),
+        );
 
-        // save user
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $json = json_encode($liste);
+
+        // TODO get json array
+        // $data = json_decode($request->getContent(), true);
+        $data = json_decode($json, true);
+
+        // loop through array and load create each user
+        foreach ($data as $u) {
+            $emailCheck = $userManager->findOneBy(['email' => $u['email']]);
+            $usernameCheck = $userManager->findOneBy(['username' => $u['username']]);
+
+            if ($emailCheck == null && $usernameCheck == null) {
+                $user = new Utilisateur();
+
+                // load user data
+                $user->setPrenom($u['prenom'])
+                ->setNom($u['nom'])
+                ->setEmail($u['email'])
+                ->setUsername($u['username'])
+                ->setMdp(password_hash($u['mdp'], PASSWORD_DEFAULT))
+                ->setAvatar(null)
+                ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
+
+                // set role
+                if (!empty($u['role']) && $roleManager->findOneBy(['id' => $u['role']]) != null) {
+                    $user->setIdRole($roleManager->findOneBy(['id' => $u['role']]));
+                }
+                else {
+                    $user->setIdRole($roleUsager);
+                }
+                
+                // set statut
+                if (!empty($u['statut']) && $statutManager->findOneBy(['id' => $u['statut']]) != null) {
+                    $user->setIdStatut($statutManager->findOneBy(['id' => $u['statut']]));
+                }
+                else {
+                    $user->setIdStatut($statutInactif);
+                }
+
+                if (!empty($u['avatar'])) {
+                    $user->setAvatar($u['avatar']);
+                }
+
+                // save user
+                $entityManager->persist($user);
+            }
+        }
+
+        // push to bd
+        $entityManager->flush();        
 
         return $this->render('user/confirmation.html.twig', [
-            'controller_name' => $user->getUsername(),
-            'form' => $post['form'],
+            'controller_name' => 'poggers',
+            // 'form' => $post['form'],
         ]);
     }
 }

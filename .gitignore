@@ -1,5 +1,6 @@
 # Tous les fichiers .docx (peu importe dans quels sous-dossiers ils se trouvent) sont ignorés.
 **/*.docx
+**/*.bat
 
 # Tous les fichiers téléchargés via Composer (se trouvant dans le dossier vendor) sont ignorés.
 **/vendor/
