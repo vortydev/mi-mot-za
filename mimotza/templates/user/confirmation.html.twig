@@ -3,16 +3,20 @@
 {% block title %}Confirmation{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<main>
+        {% if form.mdp %}
+            <script>
+                sendEvent(1, 1, "testUser");
+            </script>
+        {% endif %}
 
-<div class="example-wrapper">
-    <h1>Merci de vous être inscrit!</h1>
-    {# <p>Nom: {{ form.prenom }} {{ form.nom }}</p>
-    <p>Email: {{ form.email }}</p>
-    <p>Nom d'utilisateur: {{ form.username }}</p>
-    <p>Mot de passe: {{ form.mdp }}</p> #}
-</div>
+<script>
+    userId = 1;                     // À remplacer par l'id de l'utilisateur connecté
+    eventType = 1;                  // Le type 1 est "inscription d'utilisateur"
+    message = "{{form.username}} s'est inscrit le [date]";           // Les "détails" de l'événement (le message à envoyer dans l'accueil)
+    sendEvent(userId, eventType, message);
+</script>
+
+<h1>Merci de vous être inscrit!</h1>
+</main>
 {% endblock %}
