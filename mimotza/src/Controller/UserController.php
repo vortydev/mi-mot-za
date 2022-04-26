@@ -11,13 +11,9 @@ Historique de modifications :
 Date: 21/04/2022 Nom: Isabelle Rioux Description: Ajout de la fonction showUser
 Date: 21/04/2022 Nom: Étienne Ménard Description: Ajout de la fonction addUser
 Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement de l'affichage d'un joueur avec la base de données
-<<<<<<< HEAD
 Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur et du bannissement
-...
-=======
-Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur
 Date: 26/04/2022 Nom: Étienne Ménard Description: Insertion d'utilisateurs dans la BD à partir d'un tableau JSON
->>>>>>> etienne
+...
 =========================================================
 ****************************************/
 namespace App\Controller;
@@ -65,7 +61,6 @@ class UserController extends AbstractController
     #[Route('/user/{id}', name: 'particular_user')]
     public function showUser(ManagerRegistry $regis, $id): Response
     {
-        //deal with ban dans fonction si ban set inactif else set ban
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
 
@@ -88,7 +83,7 @@ class UserController extends AbstractController
     {
         $request = Request::createFromGlobals();
         $username = $request->get('form');
-        //deal with ban dans fonction si ban set inactif else set ban
+        
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['username'=>$username]);
 
