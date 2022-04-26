@@ -126,17 +126,24 @@ class DictionnaireController extends AbstractController
     }
 
     //Gere une requete api provenant de l'application mobile et ajout une suggestion dans la bd
-    #[Route('/GestionDuJeu/ajoutSuggestion', name: 'ajoutSuggestion')]
-    public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request)
+    #[Route('/ajoutSuggestion', name: 'ajoutSuggestion')]
+    public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request )
     {
         if($request->isMethod('post')){
-            $data => 
-            $em=$doctrine->getManager();
-            $etat = new EtatSuggestion;
+            $post = $request->request->all();
             $suggestion = new Suggestion;
+            $em=$doctrine->getManager();
+            $etat = $doctrine->getRepository(EtatSuggestion::class)->findBy(array('etat' => 'En attente'));
+            $langue = $doctrine->getRepository(Langue::class)->findBy(array('langue' => $post['langue']));
+            $user =  $doctrine->getRepository(Utilisateur::class)->find($post['idUser']);
+            
+            $suggestion->setIdUser($user);
+            $suggestion->setMotSuggere($post['mot']);
+            $suggestion->setIdEtatSuggestion($etat[0]);
+            $suggestion->setDateEmission(new \DateTime('now'));
+            $suggestion->setIdLangue($langue[0]);
             $em->persist($suggestion);
             $em->flush();
-            
         }
     }
 
