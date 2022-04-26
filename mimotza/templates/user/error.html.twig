@@ -1,18 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste d'utilisateurs{% endblock %}
+{% block title %}Erreur 404{% endblock %}
 
 {% block body %}
 <!-- /****************************************
-Fichier : index.html.twig
+Fichier : error.html.twig
 Auteur : Isabelle Rioux
 Fonctionnalité : Template d'affichage de la liste d'utilisateurs
-Date : 21/04/2022
+Date : 26/04/2022
 Vérification :
 Date Nom Approuvé
 =========================================================
 Historique de modifications :
-Date: 25/04/2022 Nom: Isabelle Rioux Description: Affichage de la liste de joueurs
+Date: 26/04/2022 Nom: Isabelle Rioux Description: affichage d'une erreur si un joueur n'éxiste pas
 ...
 =========================================================
 ****************************************/-->
@@ -22,10 +22,8 @@ Date: 25/04/2022 Nom: Isabelle Rioux Description: Affichage de la liste de joueu
 </style>
 
 <div class="example-wrapper">
-    <h1>Liste des joueurs</h1>
-
-    {% for user in list_users %}
-        {{user.username}}: {{user.idStatut.statut}} <a href="/user/{{user.id}}">Afficher le profil</a>
-    {% endfor %}
+    <h1>Erreur 404!</h1>
+    <h2>Il est possible que le joueur que vous cherchez n'est pas dans la base de données... Vérifiez votre recherche et réessayez!</h2>
+    
 </div>
 {% endblock %}

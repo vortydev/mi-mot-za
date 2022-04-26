@@ -42,7 +42,7 @@ class UserController extends AbstractController
     #[Route('/user', name: 'user')]
     public function index(ManagerRegistry $regis): Response
     {
-        //render all user and search user
+        //search user
         $userRepository = $regis->getRepository(Utilisateur::class);
         $users = $userRepository->findAll();
         return $this->render('user/index.html.twig', [
@@ -54,14 +54,22 @@ class UserController extends AbstractController
     #[Route('/user/{id}', name: 'particular_user')]
     public function showUser(ManagerRegistry $regis, $id): Response
     {
-        //deal with ban
+        //deal with ban dans fonction si ban set inactif else set ban
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
 
-        return $this->render('user/user.html.twig', [
-            'controller_name' => 'UserController',
-            'user' => $user
-        ]);
+        if (isset($user)){
+            return $this->render('user/user.html.twig', [
+                'controller_name' => 'UserController',
+                'user' => $user
+            ]);
+        }
+        else{
+            return $this->render('user/error.html.twig', [
+                'controller_name' => 'UserController',
+            ]);
+        }
+        
     }
 
     #[Route('/inscription', name: 'inscription')]
