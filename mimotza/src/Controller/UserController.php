@@ -9,26 +9,23 @@ Date Nom Approuvé
 =========================================================
 Historique de modifications :
 Date: 21/04/2022 Nom: Isabelle Rioux Description: Ajout de la fonction showUser
+Date: 21/04/2022 Nom: Étienne Ménard Description: Ajout de la fonction addUser
 Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement de l'affichage d'un joueur avec la base de données
 Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur
-...
+Date: 26/04/2022 Nom: Étienne Ménard Description: Insertion d'utilisateurs dans la BD à partir d'un tableau JSON
 =========================================================
 ****************************************/
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Regex;
 
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -38,7 +35,6 @@ use App\Entity\Statut;
 use App\Repository\StatutRepository;
 use App\Entity\Utilisateur;
 use App\Repository\UtilisateurRepository;
-use Exception;
 
 class UserController extends AbstractController
 {
