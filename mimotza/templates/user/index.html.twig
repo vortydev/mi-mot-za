@@ -13,6 +13,7 @@ Date Nom Approuvé
 =========================================================
 Historique de modifications :
 Date: 25/04/2022 Nom: Isabelle Rioux Description: Affichage de la liste de joueurs
+Date: 26/04/2022 Nom: Isabelle Rioux Description: Ajout de la recherche d'un joureur
 ...
 =========================================================
 ****************************************/-->
@@ -23,7 +24,7 @@ Date: 25/04/2022 Nom: Isabelle Rioux Description: Affichage de la liste de joueu
 
 <div class="example-wrapper">
     <h1>Liste des joueurs</h1>
-
+    {{form(form_user)}}
     {% for user in list_users %}
         {{user.username}}: {{user.idStatut.statut}} <a href="/user/{{user.id}}">Afficher le profil</a>
     {% endfor %}

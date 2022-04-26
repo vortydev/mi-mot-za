@@ -10,6 +10,7 @@ Date Nom Approuvé
 Historique de modifications :
 Date: 21/04/2022 Nom: Isabelle Rioux Description: Ajout de la fonction showUser
 Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement de l'affichage d'un joueur avec la base de données
+Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur
 ...
 =========================================================
 ****************************************/
@@ -22,6 +23,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,12 +44,19 @@ class UserController extends AbstractController
     #[Route('/user', name: 'user')]
     public function index(ManagerRegistry $regis): Response
     {
-        //search user
+        $form=$this->createFormBuilder()
+        ->setAction($this->generateUrl('result'))
+        ->setMethod('POST')
+        ->add('username', SearchType::class, ['label'=>'Rechercher un joueur'])
+        ->add('envoyer', SubmitType::class, ['label'=>'Envoyer'])
+        ->getForm();
+        
         $userRepository = $regis->getRepository(Utilisateur::class);
         $users = $userRepository->findAll();
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
-            'list_users' => $users
+            'list_users' => $users,
+            'form_user'=>$form->createView()
         ]);
     }
 
@@ -72,9 +81,11 @@ class UserController extends AbstractController
         
     }
 
-    #[Route('/user/{username}', name: 'particular_user')]
-    public function showResearchResult(ManagerRegistry $regis, $username): Response
+    #[Route('/resultuser', name: 'result')]
+    public function showResearchResult(ManagerRegistry $regis): Response
     {
+        $request = Request::createFromGlobals();
+        $username = $request->get('form');
         //deal with ban dans fonction si ban set inactif else set ban
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['username'=>$username]);
@@ -90,7 +101,6 @@ class UserController extends AbstractController
                 'controller_name' => 'UserController',
             ]);
         }
-        
     }
 
     #[Route('/inscription', name: 'inscription')]
