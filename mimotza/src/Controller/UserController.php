@@ -1,7 +1,7 @@
 <?php
 /****************************************
 Fichier : UserController.php
-Auteur : Isabelle Rioux, Étienne Ménard
+Auteurs : Isabelle Rioux, Étienne Ménard
 Fonctionnalité : Classe UserController pour la gestion des joueurs
 Date : 21/04/2022
 Vérification :

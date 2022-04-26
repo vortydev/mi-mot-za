@@ -36,9 +36,10 @@ body {
     background-color: var(--charcoal);
     font-family: 'Trebuchet MS', sans-serif;
     font-size: large;
+    color: white;
 }
 
-p, h1, h2, h3, h4, h5, li {
+p, h1, h2, h3, h4, h5, li, label, legend {
     color: white;
 }
 
@@ -58,12 +59,28 @@ ul, ol {
     padding: 0;
 }
 
+h1 {
+    margin-bottom: 15px;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+h3 {
+    margin-bottom: 5px;
+}
+
 /* ALIGNMENT AND STUFF */
 [class*="flex"] {
     display: flex;
     flex-wrap: wrap;
     align-content: center;
     flex-direction: row;
+}
+
+.erreur {
+    color: var(--lavande);
 }
 
 /* HEADER */
@@ -141,6 +158,13 @@ nav {
 
 .selectedNav {
     background-color: var(--bleuf) !important;
+}
+
+/* MAIN */
+main {
+    width: 60%;
+    margin: auto;
+    margin-bottom: 60px;
 }
 
 /* FOOTER */
