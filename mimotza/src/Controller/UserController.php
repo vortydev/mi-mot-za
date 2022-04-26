@@ -40,16 +40,21 @@ use App\Repository\UtilisateurRepository;
 class UserController extends AbstractController
 {
     #[Route('/user', name: 'user')]
-    public function index(): Response
+    public function index(ManagerRegistry $regis): Response
     {
+        //render all user and search user
+        $userRepository = $regis->getRepository(Utilisateur::class);
+        $users = $userRepository->findAll();
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
+            'list_users' => $users
         ]);
     }
 
     #[Route('/user/{id}', name: 'particular_user')]
     public function showUser(ManagerRegistry $regis, $id): Response
     {
+        //deal with ban
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
 
