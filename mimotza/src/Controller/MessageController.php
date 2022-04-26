@@ -5,6 +5,7 @@ use App\Entity\Message;
 use App\Entity\Utilisateur;
 use App\Entity\Thread;
 
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,10 +43,12 @@ class MessageController extends AbstractController
     public function ajoutMessage(ManagerRegistry $doctrine, Request $request): Response
     {
         if ($request->isMethod('post')) {
-            $post = $request->request->all();
-            $em = $doctrine->getManager();
-            $message = new Message;
-            $listeMessages = $doctrine->getRepository(Message::class)->findALL();
+            if($post['action'] != 'thread'){
+                $post = $request->request->all();
+                $em = $doctrine->getManager();
+                $message = new Message;
+                $listeMessages = $doctrine->getRepository(Message::class)->findALL();
+            }
             return $this->render('message/reponse.html.twig', [
                 'controller_name' => 'MessageController',
                 'post' => $post

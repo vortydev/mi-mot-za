@@ -6,6 +6,7 @@ use App\Entity\Mot;
 use App\Entity\Langue;
 use App\Entity\Suggestion;
 use App\Entity\EtatSuggestion;
+use App\Entity\Utilisateur;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,14 +17,13 @@ use App\Form\AjouterMotType;
 
 class DictionnaireController extends AbstractController
 {
-
-    #[Route('/GestionDuJeu', name: 'app_dictionnaire')]
+    //Accueil du gestion de mot qui affiche les mots et les suggestion des mts
+    #[Route('/GestionDuJeu', name: 'accueil_gestionDuJeu')]
     public function index(ManagerRegistry $doctrine, Request $request): Response
     {
         $em = $doctrine->getManager();
         $listeMots = $doctrine->getRepository(Mot::class)->findALL();
-
-        //Cherhce les mots suggeres qui ont letat en attente (1)
+        //Cherhce les mots suggeres qui ont letat en attente(id : 1)
         $listeMotsSuggere = $doctrine->getRepository(Suggestion::class)->findBy(array('idEtatSuggestion' => 1));
 
         $mot = new Mot;
@@ -34,7 +34,7 @@ class DictionnaireController extends AbstractController
             $em->flush();
             $session = $request->getSession();
             $session->getFlashbag()->add('action',"Le mot ".$mot->getMot()." a été ajouté");
-            return $this->redirect($this->generateURL('app_dictionnaire'));
+            return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
         }
         return $this->render('dictionnaire/index.html.twig', [
             'controller_name' => 'DictionnaireController',
@@ -45,6 +45,7 @@ class DictionnaireController extends AbstractController
         ]);
     }
 
+    //Gestion automatique d'un refus d'une suggestion des mots
     #[Route('/GestionDuJeu/refuseSuggestion', name: 'refuseSuggestion')]
     public function refuseSuggestion(ManagerRegistry $doctrine, Request $request): Response
     {
@@ -61,9 +62,10 @@ class DictionnaireController extends AbstractController
         $session->getFlashBag()->add('delete', "le mot suggèré : ".$suggestion->getMotSuggere()." a été réfusé");
         //$em->remove($suggestion);
         $em->flush();
-        return $this->redirect($this->generateURL('app_dictionnaire'));
+        return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
     }
 
+    //Gestion automatique d'un ajout d'un mot
     #[Route('/GestionDuJeu/ajoutSuggestion', name: 'AjoutSuggestion')]
     public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request): Response
     {
@@ -78,7 +80,6 @@ class DictionnaireController extends AbstractController
         $suggestion = $suggestionrepo->find($id);
         $motrepo= $em->getRepository(Mot::class);
         
-
         //Verification si le mot existe deja sur la bd
         if($motrepo->findBy(array('mot' => $suggestion->getMotSuggere()))){
             $session->getFlashBag()->add('delete', "le mot suggeré : ".$suggestion->getMotSuggere()." existe sur la bd : Refusé");
@@ -103,7 +104,26 @@ class DictionnaireController extends AbstractController
             $em->flush();
             $session->getFlashBag()->add('delete', "le mot suggeré : ".$suggestion->getMotSuggere()." a été accepté");
         }
-        return $this->redirect($this->generateURL('app_dictionnaire'));
+        return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
+    }
+
+
+    //Redirecction vers les statistique d'un mot
+    #[Route('/GestionDuJeu/{idMot}', name: 'mot_stat')]
+    public function statistiquesMot(ManagerRegistry $doctrine, Request $request, $idMot): Response
+    {
+        $suggestion = new Suggestion;
+        $etat = new EtatSuggestion;
+        $em=$doctrine->getManager();
+        $motrepo = $em->getRepository(Mot::class);
+        $mot = $motrepo->find($idMot);
+
+        return $this->render('dictionnaire/statistiqueMot.html.twig', [
+            'mot' => $mot->getMot(),
+            'idMot' => $idMot,
+            'nbFoisJoue' => 1000
+        ]);
+        
     }
 
 
