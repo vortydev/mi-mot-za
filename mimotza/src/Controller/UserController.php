@@ -72,6 +72,27 @@ class UserController extends AbstractController
         
     }
 
+    #[Route('/user/{username}', name: 'particular_user')]
+    public function showResearchResult(ManagerRegistry $regis, $username): Response
+    {
+        //deal with ban dans fonction si ban set inactif else set ban
+        $userRepository = $regis->getRepository(Utilisateur::class);
+        $user = $userRepository->findOneBy(['username'=>$username]);
+
+        if (isset($user)){
+            return $this->render('user/user.html.twig', [
+                'controller_name' => 'UserController',
+                'user' => $user
+            ]);
+        }
+        else{
+            return $this->render('user/error.html.twig', [
+                'controller_name' => 'UserController',
+            ]);
+        }
+        
+    }
+
     #[Route('/inscription', name: 'inscription')]
     public function inscription(ManagerRegistry $doctrine): Response
     {
