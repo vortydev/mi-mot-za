@@ -45,7 +45,7 @@
         <ul>
             {% for element in listeMotsSuggere %}
                 <li>{{element.motsuggere}}
-                <button type="button" class="btn btn-success" onclick="window.location.href='/GestionDuJeu/ajoutSuggestion?id={{element.id}}'">Accepter</button>
+                <button type="button" class="btn btn-success" onclick="window.location.href='/GestionDuJeu/acceptSuggestion?id={{element.id}}'">Accepter</button>
                 <button type="button" class="btn btn-danger" onclick="window.location.href='/GestionDuJeu/refuseSuggestion?id={{element.id}}'">Refuser</button>
                 </li>
             {% endfor %}

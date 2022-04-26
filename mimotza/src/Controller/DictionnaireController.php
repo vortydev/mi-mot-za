@@ -25,7 +25,6 @@ class DictionnaireController extends AbstractController
         $listeMots = $doctrine->getRepository(Mot::class)->findALL();
         //Cherhce les mots suggeres qui ont letat en attente(id : 1)
         $listeMotsSuggere = $doctrine->getRepository(Suggestion::class)->findBy(array('idEtatSuggestion' => 1));
-
         $mot = new Mot;
         $form = $this->createform(AjouterMotType::class, $mot);
         $form->handleRequest($request);
@@ -66,8 +65,8 @@ class DictionnaireController extends AbstractController
     }
 
     //Gestion automatique d'un ajout d'un mot
-    #[Route('/GestionDuJeu/ajoutSuggestion', name: 'AjoutSuggestion')]
-    public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request): Response
+    #[Route('/GestionDuJeu/acceptSuggestion', name: 'acceptSuggestion')]
+    public function acceptSuggestion(ManagerRegistry $doctrine, Request $request): Response
     {
         $id = $_GET['id'];
         $em=$doctrine->getManager();
@@ -124,6 +123,21 @@ class DictionnaireController extends AbstractController
             'nbFoisJoue' => 1000
         ]);
         
+    }
+
+    //Gere une requete api provenant de l'application mobile et ajout une suggestion dans la bd
+    #[Route('/GestionDuJeu/ajoutSuggestion', name: 'ajoutSuggestion')]
+    public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request)
+    {
+        if($request->isMethod('post')){
+            $data => 
+            $em=$doctrine->getManager();
+            $etat = new EtatSuggestion;
+            $suggestion = new Suggestion;
+            $em->persist($suggestion);
+            $em->flush();
+            
+        }
     }
 
 
