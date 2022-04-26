@@ -8,6 +8,13 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
+<script>
+    userId = 1;                     // À remplacer par l'id de l'utilisateur connecté
+    eventType = 1;                  // Le type 1 est "inscription d'utilisateur"
+    message = "{{form.username}} s'est inscrit le [date]";           // Les "détails" de l'événement (le message à envoyer dans l'accueil)
+    sendEvent(userId, eventType, message);
+</script>
+
 <div class="example-wrapper">
     <h1>Merci de vous être inscrit!</h1>
     {# <p>Nom: {{ form.prenom }} {{ form.nom }}</p>

@@ -17,13 +17,11 @@
         <script>
             function sendEvent(userId, eventType, mess) {
 
-                date = new Date();
-
                 httpRequest = new XMLHttpRequest();
 
                 httpRequest.onreadystatechange = function() {
                     if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                        alert(httpRequest.responseText);
+                        console.log(httpRequest.responseText);
                     }
                 };
 
