@@ -107,7 +107,7 @@ class UserController extends AbstractController
         $em = $regis->getManager();
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
-        if (isset($user)){
+        if (isset($user) && $user->getIdRole()->getRole() != "Administrateur"){
             $query = $em->createQueryBuilder();
 
             $query->update('App\Entity\Utilisateur','user');
@@ -134,6 +134,11 @@ class UserController extends AbstractController
                     'user' => $user
                 ]);
             }
+        }else if (isset($user) && $user->getIdRole()->getRole() == "Administrateur"){
+            return $this->render('user/bandenied.html.twig', [
+                'controller_name' => 'UserController',
+                'user' => $user
+            ]);
         }else{
             return $this->render('user/error.html.twig', [
                 'controller_name' => 'UserController',
