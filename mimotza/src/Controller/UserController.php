@@ -141,14 +141,14 @@ class UserController extends AbstractController
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole() != "Administrateur") {
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
             return $this->redirectToRoute('app_logout');
         }
         
         $em = $regis->getManager();
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
-        if (isset($user) && $this->getUser()->getIdRole() == "Administrateur"){
+        if (isset($user) && $this->getUser()->getIdRole()->getRole() == "Administrateur"){
             if ($user->getIdRole()->getRole() != "Administrateur"){
                 $query = $em->createQueryBuilder();
 
