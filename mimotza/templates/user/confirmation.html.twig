@@ -4,14 +4,14 @@
 
 {% block body %}
 <main>
-        {% if form.mdp %}
+        {#{% if form.mdp %}
             <script>
                 sendEvent(1, 1, "testUser");
             </script>
-        {% endif %}
+        {% endif %}#}
 
 <script>
-    userId = 1;                     // À remplacer par l'id de l'utilisateur connecté
+    userId = {{app.user.getId()}};                     // À remplacer par l'id de l'utilisateur connecté
     eventType = 1;                  // Le type 1 est "inscription d'utilisateur"
     message = "{{form.username}} s'est inscrit le [date]";           // Les "détails" de l'événement (le message à envoyer dans l'accueil)
     sendEvent(userId, eventType, message);
