@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -70,6 +71,13 @@ class UserController extends AbstractController
             ->add('username', TextType::class, ['label' => 'Nom d\'utilisateur'])
             ->add('mdp', PasswordType::class, ['label' => 'Mot de passe'])
             ->add('submit', SubmitType::class, ['label' => 'S\'inscrire!'])
+            ->add('sender', HiddenType::class, [
+
+                    'attr' => [
+                        'value' => 'website'
+                    ]
+                ]
+            )
             ->setAction($this->generateUrl('adduser'))
             ->getForm();
 
@@ -90,7 +98,14 @@ class UserController extends AbstractController
         $statutManager = $entityManager->getRepository(Statut::class);
 
         // generate objects
-        $roleUsager = $roleManager->findOneBy(['id' => 1]);
+        $roleUsager = null;
+        if (isset($post['form']['sender']) && $post['form']['sender'] == 'website') {
+            $roleUsager = $roleManager->findOneBy(['role' => 'Administrateur']);
+        }
+        else {
+            $roleUsager = $roleManager->findOneBy(['role' => 'Usager']);
+        }
+        //$roleUsager = $roleManager->findOneBy(['id' => 1]);
         $statutInactif = $statutManager->findOneBy(['id' => 1]);
         $user = new Utilisateur;
 

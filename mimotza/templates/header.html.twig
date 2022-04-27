@@ -1,0 +1,11 @@
+{% block body %}
+<ul>
+    <li><a href="/">Accueil</a></li>
+    <li><a href="/inscription">Inscription</a></li>
+    {% if app.user %}
+        <li><a href="/logout">Déconnexion</a></li>
+    {% else %}
+        <li><a href="/login">Connexion</a></li>
+    {% endif %}
+</ul>
+{% endblock %}
