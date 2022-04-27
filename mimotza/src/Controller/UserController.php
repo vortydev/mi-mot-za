@@ -46,8 +46,8 @@ class UserController extends AbstractController
         $form=$this->createFormBuilder()
         ->setAction($this->generateUrl('result'))
         ->setMethod('POST')
-        ->add('username', SearchType::class, ['label'=>'Rechercher un joueur'])
-        ->add('envoyer', SubmitType::class, ['label'=>'Envoyer'])
+        ->add('username', SearchType::class, ['label'=>' '])
+        ->add('envoyer', SubmitType::class, ['label'=>'Rechercher un joueur'])
         ->getForm();
         
         $userRepository = $regis->getRepository(Utilisateur::class);
