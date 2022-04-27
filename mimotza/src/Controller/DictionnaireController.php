@@ -7,6 +7,8 @@ use App\Entity\Langue;
 use App\Entity\Suggestion;
 use App\Entity\EtatSuggestion;
 use App\Entity\Utilisateur;
+use App\Entity\Message;
+use App\Entity\Thread;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -125,7 +127,7 @@ class DictionnaireController extends AbstractController
         
     }
 
-    //Gere une requete api provenant de l'application mobile et ajout une suggestion dans la bd
+    //Gere une requete api provenant de l'application mobile et ajoute une suggestion dans la bd
     #[Route('/ajoutSuggestion', name: 'ajoutSuggestion')]
     public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request )
     {
@@ -133,6 +135,7 @@ class DictionnaireController extends AbstractController
             $post = $request->request->all();
             $suggestion = new Suggestion;
             $em=$doctrine->getManager();
+
             $etat = $doctrine->getRepository(EtatSuggestion::class)->findBy(array('etat' => 'En attente'));
             $langue = $doctrine->getRepository(Langue::class)->findBy(array('langue' => $post['langue']));
             $user =  $doctrine->getRepository(Utilisateur::class)->find($post['idUser']);
@@ -147,5 +150,65 @@ class DictionnaireController extends AbstractController
         }
     }
 
+    //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
+    // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
+    #[Route('/ajoutMedia', name: 'ajoutMedia')]
+    public function ajoutMedia(ManagerRegistry $doctrine, Request $request )
+    {
+        if($request->isMethod('post')){
+            $em=$doctrine->getManager();
+            $post = $request->request->all();
+            $message = new Message;
+
+            $utilisateur =$doctrine->getRepository(Utilisateur::class)->find($post['idUser']);
+            
+            $message->setIdUser($utilisateur);
+            $message->setDateEmission(new \DateTime('now'));
+            $message->setContenu($post['contenu']);
+            if(isset($post['idMessageParent'])){
+                $messageParent = $doctrine->getRepository(Message::class)->find($post['idMessageParent']);
+                $message->setIdParent($messageParent);
+            }
+            $em->persist($message);
+            $em->flush();
+
+            if(isset($post['thread']) && !(isset($post['idMessageParent']))){
+                $thread = new Thread;
+                $thread->setIdUser($utilisateur);
+                $thread->setIdMessage($message);
+                $thread->setDateEmission(new \DateTime('now'));
+                $thread->setTitre($post['titre']);
+                $em->persist($thread);
+                $em->flush();
+            }
+        }
+        
+    }
+
+
+    //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
+    // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
+    #[Route('/supprimerMedia', name: 'supprimerMedia')]
+    public function supprimerMedia(ManagerRegistry $doctrine, Request $request )
+    {
+        if($request->isMethod('post')){
+            $em=$doctrine->getManager();
+            $post = $request->request->all();
+            $message = new Message;
+            if ($post['supprimer'] == 'Thread'){
+                $thread = $doctrine->getRepository(Thread::class)->find($post['idThread']);
+                $thread->setTitre('Ce contenu a été par l\'Utilisateur');
+                $message =$thread->getIdMessage();
+                $message->setContenu('Ce contenu a été par l\'Utilisateur');
+            }
+            if ($post['supprimer'] == 'Message'){
+                $message =$doctrine->getRepository(Message::class)->find($post['idMessage']);
+                $message->setContenu('Ce contenu a été par l\'Utilisateur');
+            }
+            $em->persist($message);
+            $em->flush();
+        }
+        
+    }
 
 }
