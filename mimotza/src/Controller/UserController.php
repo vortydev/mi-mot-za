@@ -170,6 +170,8 @@ class UserController extends AbstractController
         // $post = $request->request->all();
         // $encode = json_encode(array($post['form'], $post['form']));
 
+        $post = $request->request->all();
+
         // init managers
         $entityManager = $doctrine->getManager();
         $roleManager = $entityManager->getRepository(Role::class);
@@ -260,7 +262,7 @@ class UserController extends AbstractController
 
         return $this->render('user/confirmation.html.twig', [
             'controller_name' => 'poggers',
-            // 'form' => $post['form'],
+            'form' => $post['form'],
         ]);
     }
 }
