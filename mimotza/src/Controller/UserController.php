@@ -141,6 +141,8 @@ class UserController extends AbstractController
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
         }
         
         $em = $regis->getManager();
