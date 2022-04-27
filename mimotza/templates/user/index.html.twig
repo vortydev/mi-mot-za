@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste d'utilisateurs{% endblock %}
+{% block title %}Joueurs{% endblock %}
 
 {% block body %}
 <!-- /****************************************
@@ -15,15 +15,26 @@ Historique de modifications :
 Date: 25/04/2022 Nom: Isabelle Rioux Description: Affichage de la liste de joueurs
 Date: 26/04/2022 Nom: Isabelle Rioux Description: Ajout de la recherche d'un joueur
 Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
+Date: 27/04/2022 Nom: Étienne Ménard Description: Modification du titre de la page
 ...
 =========================================================
 ****************************************/-->
 
 <main>
-    <h1>Liste des joueurs</h1>
-    {{form(form_user)}}
+    <h1 class="userTitle">Liste des utilisateurs</h1>
+
+    <section class="flexUserSearch">
+        {{form(form_user)}}
+    </section>
+
+    <section class="flexUserRes">
     {% for user in list_users %}
-        {{user.username}}: {{user.idStatut.statut}} <a href="/user/{{user.id}}">Afficher le profil</a>
+    <div class="flexUser">
+        <p class="userName">{{user.username}}</p>
+        <p class="userStatut">{{user.idStatut.statut}}</p>
+        <a class="userLink" href="/user/{{user.id}}">Afficher le profil</a>
+    </div>
     {% endfor %}
+    </section>
 </main>
 {% endblock %}
