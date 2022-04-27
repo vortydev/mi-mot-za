@@ -15,24 +15,21 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Création du fichier et layo
 /* COLOR PALETTE */
 :root {
     --charcoal: #292929;
-    --grisf: #333333;
-    --grisp: #4d4d4d;
-    --bleuf: #54a4f4;
-    --bleup: #81c0ff;
+    --gris: #333333;
+    --grisa: #393939;
+    --bleu: #54a4f4;
+    --bleua: #328eeb;
     --lavande: #cbc4ff;
     --rouge: #800000;
-    --rouge2: #a00000;
+    --rougea: #700000;
 }
 
 /* CSS RESET*/
-* {
+body {
+    /* height: 100vh; */
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-}
-
-body {
-    /* height: 100vh; */
     background-color: var(--charcoal);
     font-family: 'Trebuchet MS', sans-serif;
     font-size: large;
@@ -43,17 +40,18 @@ p, h1, h2, h3, h4, h5, li, label, legend {
     color: white;
 }
 
-a, button {
+a, button, select {
     cursor: pointer;
+    transition: all 0.2s;
 }
 
 a {
-    color: var(--bleup);
+    color: var(--bleu);
     text-decoration: none;
 }
 
 a:hover {
-    color: var(--bleuf);
+    color: var(--bleua);
 }
 
 ul, ol {
@@ -93,40 +91,47 @@ header {
 
 .headerTitle {
     width: 100%;
-    margin-top: 20px;
-    margin-bottom: 30px;
+    margin-top: 10px;
+    margin-bottom: 35px;
     text-align: center;
     font-size: 4rem;
     font-weight: bold;
 }
 
-.conBox {
-    width: 100%;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
 .connexionBtn {
-    width: 150px;
+    width: 120px;
     padding: 10px;
     display: block;
-    margin: auto;
-    color: white;
+    /* float: right; */
+    position: fixed;
+    right: 15px;
+    top: 15px;
+
     text-align: center;
+    color: white;
+    background-color: var(--gris);
     border-radius: 4px;
-    background-color: var(--grisf);
 }
 
 .connexionBtn:hover {
     color: white;
+    background-color: var(--grisa);
 }
 
 .connexion {
-    background-color: var(--bleuf);
+    background-color: var(--bleu);
+}
+
+.connexion:hover {
+    background-color: var(--bleua);
 }
 
 .deconnexion {
     background-color: var(--rouge);
+}
+
+.deconnexion:hover {
+    background-color: var(--rougea);
 }
 
 /* NAVBAR */
@@ -145,8 +150,9 @@ nav {
     text-align: center;
     width: 24%;
     margin: auto;
-    background-color: var(--grisf);
+    background-color: var(--gris);
     border-radius: 4px;
+    transition: all 0.2s;
 }
 
 .flexnav a {
@@ -156,16 +162,17 @@ nav {
 }
 
 .flexnav li:hover {
-    background-color: var(--grisp);
+    background-color: var(--grisa);
 }
 
 .selectedNav {
-    background-color: var(--bleuf) !important;
+    background-color: var(--bleu) !important;
 }
 
 /* MAIN */
 main {
     width: 60%;
+    height: max-content;
     margin: auto;
     margin-bottom: 60px;
 }
@@ -173,14 +180,19 @@ main {
 button {
     width: 100px;
     color: white;
-    background-color: var(--bleuf);
+    background-color: var(--bleu);
     border-radius: 4px;
     border: none;
     padding: 5px;
 }
+
+button:hover {
+    background-color: var(--bleua);
+}
+
 /* FOOTER */
 footer {
-    bottom: 0;
+    /* bottom: 100%; */
     width: 100%;
     font-size: medium;
 }
