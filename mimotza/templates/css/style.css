@@ -171,7 +171,7 @@ nav {
 
 /* MAIN */
 main {
-    width: 60%;
+    width: 750px;
     margin: auto;
     padding-bottom: 50px;
 }
@@ -189,6 +189,11 @@ button:hover {
     background-color: var(--bleua);
 }
 
+form, input {
+    border-radius: 4px;
+    border: none;
+}
+
 /* FOOTER */
 footer {
     margin: 0;
@@ -204,20 +209,61 @@ footer {
 }
 
 /* CONNEXION */
-.loginTitle, .userTitle {
+.loginTitle, .userTitle, .logTitle {
     text-align: center;
     margin-bottom: 20px;
 }
 
 .loginForm {
-    width: 30%;
+    width: 40%;
     margin: auto;
+    margin-top: 30px;
+    text-align: center;
+    border: var(--bleu) 2px solid;
+    padding: 20px;
+}
+
+.loginForm label {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.loginForm input {
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
 }
 
 .loginBtn {
+    display:inline;
     width: 150px;
-    /* height: 50px; */
     margin: auto;
+    margin-top: 20px;
+}
+
+/* HISTORIQUE */
+.logBox {
+    width: 75%;
+    margin: auto;
+    /* margin-top: 30px; */
+    border: var(--bleu) 2px solid;
+    background-color: var(--gris);
+    /* padding: 10px; */
+}
+
+.logBox ul {
+    display: flex;
+    flex-direction: column;
+}
+
+.logBox li {
+    width: 100%;
+    padding: 5px;
+    padding-left: 10px;
+}
+
+.logBox li:hover {
+    background-color: var(--grisa);
 }
 
 /* USERS */
