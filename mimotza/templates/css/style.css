@@ -203,12 +203,24 @@ footer {
     text-align: center;
 }
 
-/* USERS */
-.userTitle {
+/* CONNEXION */
+.loginTitle, .userTitle {
     text-align: center;
     margin-bottom: 20px;
 }
 
+.loginForm {
+    width: 30%;
+    margin: auto;
+}
+
+.loginBtn {
+    width: 150px;
+    /* height: 50px; */
+    margin: auto;
+}
+
+/* USERS */
 .flexUserSearch {
     width: 60%;
     margin: auto;
