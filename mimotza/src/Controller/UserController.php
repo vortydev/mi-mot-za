@@ -1,7 +1,7 @@
 <?php
 /****************************************
 Fichier : UserController.php
-Auteur : Isabelle Rioux, Étienne Ménard
+Auteurs : Isabelle Rioux, Étienne Ménard
 Fonctionnalité : Classe UserController pour la gestion des joueurs
 Date : 21/04/2022
 Vérification :
@@ -103,59 +103,42 @@ class UserController extends AbstractController
     #[Route('/user/{id}/ban', name: 'ban')]
     public function banUser(ManagerRegistry $regis, $id): Response 
     {
+
         $em = $regis->getManager();
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
-        $query = $em->createQueryBuilder();
+        if (isset($user)){
+            $query = $em->createQueryBuilder();
 
-        $query->update('App\Entity\Utilisateur','user');
-        $query->set('user.idStatut',':statut');
+            $query->update('App\Entity\Utilisateur','user');
+            $query->set('user.idStatut',':statut');
 
-        if($user->getIdStatut()->getId() == 3){
-            $query->setParameter('statut',1);
+            if($user->getIdStatut()->getId() == 3){
+                $query->setParameter('statut',1);
+            }else{
+                $query->setParameter('statut',3);
+            }
+
+            $query->where('user.id LIKE :id');
+            $query->setParameter('id',$id);
+
+            $query->getQuery()->execute();
+            if($user->getIdStatut()->getId() == 3){
+                return $this->render('user/unban.html.twig', [
+                    'controller_name' => 'UserController',
+                    'user' => $user
+                ]);
+            }else if($user->getIdStatut()->getId() == 1 ||$user->getIdStatut()->getId() == 2){
+                return $this->render('user/ban.html.twig', [
+                    'controller_name' => 'UserController',
+                    'user' => $user
+                ]);
+            }
         }else{
-            $query->setParameter('statut',3);
-        }
-
-        $query->where('user.id LIKE :id');
-        $query->setParameter('id',$id);
-
-        $query->getQuery()->execute();
-        if($user->getIdStatut()->getId() == 3){
-            return $this->render('user/unban.html.twig', [
+            return $this->render('user/error.html.twig', [
                 'controller_name' => 'UserController',
-                'user' => $user
-            ]);
-        }else{
-            return $this->render('user/ban.html.twig', [
-                'controller_name' => 'UserController',
-                'user' => $user
             ]);
         }
-    }
-
-    #[Route('/inscription', name: 'inscription')]
-    public function inscription(ManagerRegistry $doctrine): Response
-    {
-        $entityManager = $doctrine->getManager();
-        $userManager = $entityManager->getRepository(Utilisateur::class);
-
-        $userList = $userManager->findAll();
-
-        $formInscription = $this->createFormBuilder()
-            ->add('prenom', TextType::class, ['label' => 'Prénom'])
-            ->add('nom', TextType::class, ['label' => 'Nom'])
-            ->add('email', EmailType::class, ['label' => 'Email'])
-            ->add('username', TextType::class, ['label' => 'Nom d\'utilisateur'])
-            ->add('mdp', PasswordType::class, ['label' => 'Mot de passe'])
-            ->add('submit', SubmitType::class, ['label' => 'S\'inscrire!'])
-            ->setAction($this->generateUrl('adduser'))
-            ->getForm();
-
-        return $this->render('user/inscription.html.twig', [
-            'controller_name' => 'UserController',
-            'form' => $formInscription->createView(),
-        ]);
     }
 
     #[Route('/adduser', name: 'adduser')]
