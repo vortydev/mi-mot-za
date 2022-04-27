@@ -13,6 +13,7 @@ Date: 21/04/2022 Nom: Étienne Ménard Description: Ajout de la fonction addUser
 Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement de l'affichage d'un joueur avec la base de données
 Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur et du bannissement
 Date: 26/04/2022 Nom: Étienne Ménard Description: Insertion d'utilisateurs dans la BD à partir d'un tableau JSON
+Date: 27/04/2022 Nom: Isabelle Rioux Description: Simplification de l'affichage de ban/unban et bandenied et empecher un admin d'etre banni
 ...
 =========================================================
 ****************************************/
@@ -107,35 +108,25 @@ class UserController extends AbstractController
         $em = $regis->getManager();
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
-        if (isset($user) && $user->getIdRole()->getRole() != "Administrateur"){
-            $query = $em->createQueryBuilder();
+        if (isset($user)){
+            if ($user->getIdRole()->getRole() != "Administrateur"){
+                $query = $em->createQueryBuilder();
 
-            $query->update('App\Entity\Utilisateur','user');
-            $query->set('user.idStatut',':statut');
+                $query->update('App\Entity\Utilisateur','user');
+                $query->set('user.idStatut',':statut');
 
-            if($user->getIdStatut()->getId() == 3){
-                $query->setParameter('statut',1);
-            }else{
-                $query->setParameter('statut',3);
+                if($user->getIdStatut()->getId() == 3){
+                    $query->setParameter('statut',1);
+                }else{
+                    $query->setParameter('statut',3);
+                }
+
+                $query->where('user.id LIKE :id');
+                $query->setParameter('id',$id);
+
+                $query->getQuery()->execute();
             }
-
-            $query->where('user.id LIKE :id');
-            $query->setParameter('id',$id);
-
-            $query->getQuery()->execute();
-            if($user->getIdStatut()->getId() == 3){
-                return $this->render('user/unban.html.twig', [
-                    'controller_name' => 'UserController',
-                    'user' => $user
-                ]);
-            }else if($user->getIdStatut()->getId() == 1 ||$user->getIdStatut()->getId() == 2){
-                return $this->render('user/ban.html.twig', [
-                    'controller_name' => 'UserController',
-                    'user' => $user
-                ]);
-            }
-        }else if (isset($user) && $user->getIdRole()->getRole() == "Administrateur"){
-            return $this->render('user/bandenied.html.twig', [
+            return $this->render('user/ban.html.twig', [
                 'controller_name' => 'UserController',
                 'user' => $user
             ]);
