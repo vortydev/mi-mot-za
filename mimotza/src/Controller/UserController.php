@@ -44,6 +44,10 @@ class UserController extends AbstractController
     #[Route('/user', name: 'user')]
     public function index(ManagerRegistry $regis): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $form=$this->createFormBuilder()
         ->setAction($this->generateUrl('result'))
         ->setMethod('POST')
@@ -63,6 +67,10 @@ class UserController extends AbstractController
     #[Route('/user/{id}', name: 'particular_user')]
     public function showUser(ManagerRegistry $regis, $id): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
 
@@ -83,6 +91,10 @@ class UserController extends AbstractController
     #[Route('/resultuser', name: 'result')]
     public function showResearchResult(ManagerRegistry $regis): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $request = Request::createFromGlobals();
         $username = $request->get('form');
         
@@ -127,7 +139,10 @@ class UserController extends AbstractController
     #[Route('/user/{id}/ban', name: 'ban')]
     public function banUser(ManagerRegistry $regis, $id): Response 
     {
-
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        
         $em = $regis->getManager();
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
