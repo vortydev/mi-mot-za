@@ -2,8 +2,11 @@
 <header>
     <h1 class="headerTitle">Mi-Mot-Za</h1>
     <div class="conBox">
-        <a class="connexionBtn connexion" href="http://localhost:8000/login">Connexion</a>
+    {% if app.user %}
         <a class="connexionBtn connexion" href="http://localhost:8000/logout">Déconnexion</a>
+    {% else %}
+        <a class="connexionBtn connexion" href="http://localhost:8000/login">Connexion</a>
+    {% endif %}
     </div>
 </header>
 <nav>

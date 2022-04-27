@@ -146,7 +146,7 @@ class UserController extends AbstractController
         $em = $regis->getManager();
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
-        if (isset($user)){
+        if (isset($user) && $this->getUser()->getIdRole() == "Administrateur"){
             if ($user->getIdRole()->getRole() != "Administrateur"){
                 $query = $em->createQueryBuilder();
 
@@ -170,7 +170,7 @@ class UserController extends AbstractController
             ]);
         }else{
             return $this->render('user/error.html.twig', [
-                'controller_name' => 'UserController',
+                'controller_name' => 'UserController'
             ]);
         }
     }
