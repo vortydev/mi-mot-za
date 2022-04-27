@@ -66,7 +66,7 @@ class DictionnaireController extends AbstractController
         return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
     }
 
-    //Gestion automatique d'un ajout d'un mot
+    //Gestion automatique d'un ajout d'un mot avec un requete API
     #[Route('/GestionDuJeu/acceptSuggestion', name: 'acceptSuggestion')]
     public function acceptSuggestion(ManagerRegistry $doctrine, Request $request): Response
     {
@@ -87,7 +87,6 @@ class DictionnaireController extends AbstractController
             $etat = $etatrepo->findBy(array('etat' => 'Refusé'));
             $suggestion->setIdEtatSuggestion($etat[0]);
             $em->persist($suggestion);
-            // actually executes the queries (i.e. the INSERT query)
             $em->flush();
         }else{
             $mot = new Mot;
@@ -99,9 +98,7 @@ class DictionnaireController extends AbstractController
             $mot->setIdLangue($langue);
             $mot->setDateAjout(new \DateTime('now'));
             $mot->setMot($suggestion->getMotSuggere());
-            // tell Doctrine you want to (eventually) save the Product (no queries yet)
             $em->persist($mot);
-            // actually executes the queries (i.e. the INSERT query)
             $em->flush();
             $session->getFlashBag()->add('delete', "le mot suggeré : ".$suggestion->getMotSuggere()." a été accepté");
         }
@@ -109,7 +106,7 @@ class DictionnaireController extends AbstractController
     }
 
 
-    //Redirecction vers les statistique d'un mot
+    //Redirecction vers les statistique d'un mot 
     #[Route('/GestionDuJeu/{idMot}', name: 'mot_stat')]
     public function statistiquesMot(ManagerRegistry $doctrine, Request $request, $idMot): Response
     {
