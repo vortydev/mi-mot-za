@@ -24,6 +24,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -100,7 +101,29 @@ class UserController extends AbstractController
             ]);
         }
     }
+    #[Route('/inscription', name: 'inscription')]
+    public function inscription(ManagerRegistry $doctrine): Response {
+        $formInscription = $this->createFormBuilder()
+            ->add('prenom', TextType::class, ['label' => 'Prénom'])
+            ->add('nom', TextType::class, ['label' => 'Nom'])
+            ->add('email', EmailType::class, ['label' => 'Email'])
+            ->add('username', TextType::class, ['label' => 'Nom d\'utilisateur'])
+            ->add('mdp', PasswordType::class, ['label' => 'Mot de passe'])
+            ->add('submit', SubmitType::class, ['label' => 'S\'inscrire!'])
+            ->add('sender', HiddenType::class, [
 
+                    'attr' => [
+                        'value' => 'website'
+                    ]
+                ]
+            )
+            ->setAction($this->generateUrl('adduser'))
+            ->getForm();
+
+            return $this->render('user/inscription.html.twig', [
+                'form' => $formInscription
+            ]);
+    }
     #[Route('/user/{id}/ban', name: 'ban')]
     public function banUser(ManagerRegistry $regis, $id): Response 
     {
@@ -150,7 +173,14 @@ class UserController extends AbstractController
         $userManager = $entityManager->getRepository(Utilisateur::class);
 
         // generate objects
-        $roleUsager = $roleManager->findOneBy(['id' => 1]);
+        $roleUsager = null;
+        if (isset($post['form']['sender']) && $post['form']['sender'] == 'website') {
+            $roleUsager = $roleManager->findOneBy(['role' => 'Administrateur']);
+        }
+        else {
+            $roleUsager = $roleManager->findOneBy(['role' => 'Usager']);
+        }
+        //$roleUsager = $roleManager->findOneBy(['id' => 1]);
         $statutInactif = $statutManager->findOneBy(['id' => 1]);
 
         // TEMP
