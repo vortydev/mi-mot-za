@@ -1,0 +1,51 @@
+<!-- /****************************************
+Fichier : responsive.css
+Auteur : Étienne Ménard
+Fonctionnalité : CSS des éléments responsive du site.
+Date : 27/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+Date: 27/04/2022 Nom: Étienne Ménard Description: Création du fichier et responsive de base
+...
+=========================================================
+****************************************/-->
+
+/* PHONE MEDIA QUERY */
+@media only screen and (max-width: 900px) {
+/* HEADER */
+.headerTitle {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+/* CONNEXION */
+.connexionBtn {
+    width: 120px;
+    position: relative;
+    margin: auto;
+    right: unset;
+    top: unset;
+}
+
+/* NAVBAR */
+.flexnav {
+    width: 95%;
+    flex-direction: column;
+}
+
+.flexnav li {
+    width: 75%;
+    margin-bottom: 5px;
+}
+
+main {
+    width: 80%;
+}
+
+footer {
+    position: static;
+}
+    
+}
