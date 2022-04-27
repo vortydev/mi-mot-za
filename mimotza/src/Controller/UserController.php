@@ -46,6 +46,8 @@ class UserController extends AbstractController
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
         }
 
         $form=$this->createFormBuilder()
@@ -69,6 +71,8 @@ class UserController extends AbstractController
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
         }
 
         $userRepository = $regis->getRepository(Utilisateur::class);
@@ -93,6 +97,8 @@ class UserController extends AbstractController
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
         }
 
         $request = Request::createFromGlobals();
