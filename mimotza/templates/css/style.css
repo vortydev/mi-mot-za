@@ -194,7 +194,7 @@ footer {
     margin: 0;
     padding-bottom: 10px;
     bottom: 0;
-    position: absolute;
+    position: static;
     width: 100%;
     font-size: small;
 }
@@ -204,16 +204,23 @@ footer {
 }
 
 /* CONNEXION */
-.conTitle {
-    text-align: center;
-}
-
-/* USERS */
-.userTitle {
+.loginTitle, .userTitle {
     text-align: center;
     margin-bottom: 20px;
 }
 
+.loginForm {
+    width: 30%;
+    margin: auto;
+}
+
+.loginBtn {
+    width: 150px;
+    /* height: 50px; */
+    margin: auto;
+}
+
+/* USERS */
 .flexUserSearch {
     width: 60%;
     margin: auto;
