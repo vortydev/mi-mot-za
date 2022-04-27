@@ -120,7 +120,7 @@ class UserController extends AbstractController
             ->getForm();
 
             return $this->render('user/inscription.html.twig', [
-                'form' => $formInscription
+                'form' => $formInscription->createView()
             ]);
     }
     #[Route('/user/{id}/ban', name: 'ban')]
