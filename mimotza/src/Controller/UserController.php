@@ -141,30 +141,6 @@ class UserController extends AbstractController
         }
     }
 
-    #[Route('/inscription', name: 'inscription')]
-    public function inscription(ManagerRegistry $doctrine): Response
-    {
-        $entityManager = $doctrine->getManager();
-        $userManager = $entityManager->getRepository(Utilisateur::class);
-
-        $userList = $userManager->findAll();
-
-        $formInscription = $this->createFormBuilder()
-            ->add('prenom', TextType::class, ['label' => 'Prénom'])
-            ->add('nom', TextType::class, ['label' => 'Nom'])
-            ->add('email', EmailType::class, ['label' => 'Email'])
-            ->add('username', TextType::class, ['label' => 'Nom d\'utilisateur'])
-            ->add('mdp', PasswordType::class, ['label' => 'Mot de passe'])
-            ->add('submit', SubmitType::class, ['label' => 'S\'inscrire!'])
-            ->setAction($this->generateUrl('adduser'))
-            ->getForm();
-
-        return $this->render('user/inscription.html.twig', [
-            'controller_name' => 'UserController',
-            'form' => $formInscription->createView(),
-        ]);
-    }
-
     #[Route('/adduser', name: 'adduser')]
     public function addUser(Request $request, ManagerRegistry $doctrine): Response {
         // get post TEMP
