@@ -209,7 +209,7 @@ footer {
 }
 
 /* CONNEXION */
-.loginTitle, .userTitle {
+.loginTitle, .userTitle, .logTitle {
     text-align: center;
     margin-bottom: 20px;
 }
@@ -239,6 +239,31 @@ footer {
     width: 150px;
     margin: auto;
     margin-top: 20px;
+}
+
+/* HISTORIQUE */
+.logBox {
+    width: 75%;
+    margin: auto;
+    /* margin-top: 30px; */
+    border: var(--bleu) 2px solid;
+    background-color: var(--gris);
+    /* padding: 10px; */
+}
+
+.logBox ul {
+    display: flex;
+    flex-direction: column;
+}
+
+.logBox li {
+    width: 100%;
+    padding: 5px;
+    padding-left: 10px;
+}
+
+.logBox li:hover {
+    background-color: var(--grisa);
 }
 
 /* USERS */
