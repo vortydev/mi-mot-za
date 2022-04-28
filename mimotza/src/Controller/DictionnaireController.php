@@ -214,7 +214,7 @@ class DictionnaireController extends AbstractController
             $user =  $doctrine->getRepository(Utilisateur::class)->find($post['idUser']);
             
             $suggestion->setIdUser($user);
-            $suggestion->setMotSuggere($suggestion->getMotSuggere($post['mot']));
+            $suggestion->setMotSuggere($post['mot']);
             $suggestion->setIdEtatSuggestion($etat[0]);
             $suggestion->setDateEmission(new \DateTime('now'));
             $suggestion->setIdLangue($langue[0]);
