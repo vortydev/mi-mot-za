@@ -34,9 +34,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class MessageController extends AbstractController
 {
 
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     #[Route('/message', name: 'app_message')]
     /**
     *  @Security("is_granted('ROLE_ADMIN')")
