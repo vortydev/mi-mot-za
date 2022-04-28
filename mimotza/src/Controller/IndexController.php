@@ -30,6 +30,12 @@ class IndexController extends AbstractController
     #[Route('/', name: 'app_index')]
     public function index(ManagerRegistry $doctrine): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+
         $entityManager = $doctrine->getManager();
 
         $historicRepos = $entityManager->getRepository(Historique::class);

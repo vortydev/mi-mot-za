@@ -42,6 +42,12 @@ class EventController extends AbstractController
     #[Route('/event', name: 'app_event')]
     public function event(Request $request, ManagerRegistry $doctrine): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+
         $code = 200;
         $error = null;
 
@@ -114,6 +120,12 @@ class EventController extends AbstractController
     // Le troisième paramètre est où la page doit
     #[Route('/redirect/{userId}/{eventType}/{whereTo}', name: 'app_eventRedirect')]
     public function eventRedirect(ManagerRegistry $doctrine, int $userId, int $eventType, string $whereTo): Response {
+
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
 
         if (isset($userId)) {
 

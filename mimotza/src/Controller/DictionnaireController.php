@@ -41,6 +41,12 @@ class DictionnaireController extends AbstractController
     #[Route('/GestionDuJeu', name: 'accueil_gestionDuJeu')]
     public function index(ManagerRegistry $doctrine, Request $request): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+
         $em = $doctrine->getManager();
         $listeMots = $doctrine->getRepository(Mot::class)->findALL();
         //Cherhce les mots suggeres qui ont letat en attente(id : 1)
@@ -68,6 +74,12 @@ class DictionnaireController extends AbstractController
     #[Route('/GestionDuJeu/refuseSuggestion', name: 'refuseSuggestion')]
     public function refuseSuggestion(ManagerRegistry $doctrine, Request $request): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+
         $id = $_GET['id'];
         $suggestion = new Suggestion;
         $etat = new EtatSuggestion;
@@ -88,6 +100,12 @@ class DictionnaireController extends AbstractController
     #[Route('/GestionDuJeu/acceptSuggestion', name: 'acceptSuggestion')]
     public function acceptSuggestion(ManagerRegistry $doctrine, Request $request): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+
         $id = $_GET['id'];
         $em=$doctrine->getManager();
         $session = $request->getSession();
@@ -128,6 +146,12 @@ class DictionnaireController extends AbstractController
     #[Route('/GestionDuJeu/{idMot}', name: 'mot_stat')]
     public function statistiquesMot(ManagerRegistry $doctrine, Request $request, $idMot): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+
         $suggestion = new Suggestion;
         $etat = new EtatSuggestion;
         $em=$doctrine->getManager();
@@ -172,6 +196,12 @@ class DictionnaireController extends AbstractController
     #[Route('/ajoutSuggestion', name: 'ajoutSuggestion')]
     public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request )
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+        
         if($request->isMethod('post')){
             $post = $request->request->all();
             $suggestion = new Suggestion;

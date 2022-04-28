@@ -36,7 +36,12 @@ class MessageController extends AbstractController
     #[Route('/message', name: 'app_message')]
     public function index(ManagerRegistry $doctrine, Request $request): Response
     {
-      
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+
         $form=$this->createFormBuilder()
         ->setAction($this->generateUrl('joueur_message'))
         ->setMethod('POST')
@@ -58,6 +63,12 @@ class MessageController extends AbstractController
     #[Route('/message/utilisateur', name: 'joueur_message')]
     public function messageUtilisateur(ManagerRegistry $doctrine, Request $request): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+
         $em = $doctrine->getManager();
         $post = $request->request->all();
         $username = $request->get('form');
@@ -94,6 +105,12 @@ class MessageController extends AbstractController
     #[Route('/ajoutMedia', name: 'ajoutMedia')]
     public function ajoutMedia(ManagerRegistry $doctrine, Request $request )
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+
         if($request->isMethod('post')){
             $em=$doctrine->getManager();
             $post = $request->request->all();
@@ -130,6 +147,12 @@ class MessageController extends AbstractController
     #[Route('/supprimerMedia', name: 'supprimerMedia')]
     public function supprimerMedia(ManagerRegistry $doctrine, Request $request )
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
+            return $this->redirectToRoute('app_logout');
+        }
+        
         if($request->isMethod('post')){
             $em=$doctrine->getManager();
             $post = $request->request->all();
