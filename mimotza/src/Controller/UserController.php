@@ -61,7 +61,6 @@ class UserController extends AbstractController
         ->getForm();
         
         $userRepository = $regis->getRepository(Utilisateur::class);
-        $users = $userRepository->findAll();
 
         $query = $userRepository->createQueryBuilder('user')->getQuery();
 
