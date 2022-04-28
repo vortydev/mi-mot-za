@@ -1,5 +1,22 @@
 <?php
-
+/****************************************
+Fichier : EventController.php
+Auteurs : François-Nicolas Gitzhofer
+Fonctionnalité : Classe EventController qui permet la gestion d'événements
+Date : 21/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications (Approximatif):
+Date: 21/04/2022 Nom: François-Nicolas Gitzhofer Description: Ajout de la méthode event
+Date: 22/04/2022 Nom: François-Nicolas Gitzhofer Description: Amélioration de la méthode event
+Date: 24/04/2022 Nom: François-Nicolas Gitzhofer Description: Ajout de la méthode redirect
+Date: 25/04/2022 Nom: François-Nicolas Gitzhofer Description: Amélioration de la gestion d'event de connexion
+Date: 26/04/2022 Nom: François-Nicolas Gitzhofer Description: Changement de la gestion d'event de connexion avec un switch case
+Date: 27/04/2022 Nom: François-Nicolas Gitzhofer Description: Ajout de la gestion d'event de déconnexion + finalisation EventController
+...
+=========================================================
+****************************************/
 namespace App\Controller;
 
 use Doctrine\Persistence\ManagerRegistry;
@@ -92,6 +109,9 @@ class EventController extends AbstractController
         return $this->render('event/event.html.twig');
     }
 
+    // Le premier paramètre est l'id de l'utilisateur
+    // Le deuxième paramètre est l'id du type d'événement
+    // Le troisième paramètre est où la page doit
     #[Route('/redirect/{userId}/{eventType}/{whereTo}', name: 'app_eventRedirect')]
     public function eventRedirect(ManagerRegistry $doctrine, int $userId, int $eventType, string $whereTo): Response {
 

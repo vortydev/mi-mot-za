@@ -1,5 +1,19 @@
 <?php
-
+/****************************************
+Fichier : SecurityController.php
+Auteurs : François-Nicolas Gitzhofer
+Fonctionnalité : Classe SecurityController qui permet d'afficher le formulaire de connexion.
+Date : 21/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications (Approximatif) :
+Date: 25/04/2022 Nom: François-Nicolas Gitzhofer Description: Création du contrôleur en utilisant les commandes sur powershell
+Date: 26/04/2022 Nom: François-Nicolas Gitzhofer Description: Ajout de la fonction de redirection au début de login
+Date: 27/04/2022 Nom: François-Nicolas Gitzhofer Description: Amélioration de la fonction de redirection au début de login
+...
+=========================================================
+****************************************/
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
