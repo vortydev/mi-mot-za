@@ -25,6 +25,8 @@ use App\Entity\Utilisateur;
 use App\Entity\Evenement;
 use App\Entity\Historique;
 use App\Entity\Statut;
+use App\Entity\Partie;
+use App\Entity\Mot;
 
 use App\Repository\UtilisateurRepository;
 use App\Repository\EvenementRepository;
@@ -113,7 +115,7 @@ class EventController extends AbstractController
     // Le deuxième paramètre est l'id du type d'événement
     // Le troisième paramètre est où la page doit
     #[Route('/redirect/{userId}/{eventType}/{whereTo}', name: 'app_eventRedirect')]
-    public function eventRedirect(ManagerRegistry $doctrine, int $userId, int $eventType, string $whereTo): Response {
+    public function eventRedirect(ManagerRegistry $doctrine, Request $request, int $userId, int $eventType, string $whereTo): Response {
 
         if (isset($userId)) {
 
@@ -177,6 +179,43 @@ class EventController extends AbstractController
                 case 8:         // Suppression Message
                     break;
                 case 9:         // Partie
+
+                    $post = $request->request->all();
+
+                    if (isset($post)
+                    && isset($post['win'])
+                    && isset($post['score'])
+                    && isset($post['temps'])
+                    && isset($post['mot'])) {
+
+                        $date = date('Y-m-d H:i:s');
+                        $motRepos = $entityManager->getRepository(Mot::class);
+                        $mot = $motRepos->findOneBy(['id' => $post['mot']]);
+                        
+                        if (isset($mot)) {
+                            $partie = new Partie;
+
+                            $partie->setIdUser($user)
+                            ->setWin($post['win'])
+                            ->setScore($post['score'])
+                            ->setTemps(date_create_from_format('Y-m-d H:i:s', $post['temps']))
+                            ->setDateEmission(date_create_from_format('Y-m-d H:i:s', $date))
+                            ->setMot($mot);
+
+                            $entityManager->persist($partie);
+
+                            $entityManager->flush();
+
+                            return $this->render('event/redirect.html.twig', [
+                                'user' => $user,
+                                'eventType' => $eventType,
+                                'whereTo' => $whereTo,
+                                'win' => $post['win'],
+                                'mot' => $mot
+                            ]);
+                        }
+                    }
+                    exit;
                     break;
                 case 10:        // Ajout Langue
                     break;

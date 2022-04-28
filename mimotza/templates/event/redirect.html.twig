@@ -34,6 +34,16 @@
         case 3:
             message = "L'utilisateur {{app.user.getUsername()}} s'est déconnecté le [date]";
             break;
+        case 9:
+            message = "L'utilisateur {{user.getUsername()}} a ";
+            if ({{win}}) {
+                message += "gagné";
+            }
+            else {
+                message += "perdu";
+            }
+            message += "en essayant de deviner le mot {{mot.getMot()}} le [date]";
+            break;
     }
 
     sendEvent(userId, {{eventType}}, message);
