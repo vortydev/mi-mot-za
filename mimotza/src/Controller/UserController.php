@@ -338,6 +338,7 @@ class UserController extends AbstractController
 
                 // save user
                 $entityManager->persist($user);
+                // jusqu'ici
             }
         }
         // push to bd
