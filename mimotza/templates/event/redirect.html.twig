@@ -12,6 +12,13 @@
         window.location.href = 'http://localhost:8000' + whereTo;
     }
 
+    body = document.getElementsByTagName("BODY")[0];
+    body.style.display = "none";
+
+    document.addEventListener('historicSent', function() {
+        body.removeAttribute("style");
+        redirectTo("{{whereTo}}");
+    });
 
     userId = {{app.user.getId()}};
 
@@ -30,10 +37,6 @@
     }
 
     sendEvent(userId, {{eventType}}, message);
-
-    const myTimeout = setTimeout(function() {
-        redirectTo("{{whereTo}}");
-    }, 5000);
 </script>
 {% else %}
 
