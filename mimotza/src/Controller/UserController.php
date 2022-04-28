@@ -276,8 +276,13 @@ class UserController extends AbstractController
         $entityManager->flush();        
 
         return $this->render('user/confirmation.html.twig', [
-            'controller_name' => 'poggers',
+            'controller_name' => 'UserController',
             'form' => $post['form'],
         ]);
+    }
+
+    #[Route('/adduserfile', name: 'adduserfile')]
+    public function addUserFile(Request $request, ManagerRegistry $doctrine): Response {
+        return $this->render('user/index.html.twig');
     }
 }

@@ -248,6 +248,7 @@ footer {
     /* margin-top: 30px; */
     border: var(--bleu) 2px solid;
     background-color: var(--gris);
+    border-radius: 4px;
     /* padding: 10px; */
 }
 
@@ -264,6 +265,7 @@ footer {
 
 .logBox li:hover {
     background-color: var(--grisa);
+    border-radius: 4px;
 }
 
 /* USERS */
@@ -294,12 +296,13 @@ footer {
 }
 
 .flexUserSearch div > div:first-of-type {
-    padding-top: 2.5px;
+    padding-top: 5px;
     padding-right: 10px;
 }
 
 .flexUserSearch div > button {
     width: 200px;
+    display: inline-block;
 }
 
 .flexUserRes {
