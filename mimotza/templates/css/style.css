@@ -393,7 +393,7 @@ footer {
     flex-direction: row;
     background-color: var(--gris);
     border-radius: 4px;
-    padding: 20px;
+    padding: 10px;
 }
 
 .flexStats > span {
@@ -538,4 +538,8 @@ footer {
 
 .flexSuggBtn > button {
     display: inline-block;
+}
+
+.motProfile {
+    width: 60%;
 }
