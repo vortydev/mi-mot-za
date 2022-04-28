@@ -30,17 +30,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class MessageController extends AbstractController
 {
     #[Route('/message', name: 'app_message')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function index(ManagerRegistry $doctrine, Request $request): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         $form=$this->createFormBuilder()
         ->setAction($this->generateUrl('joueur_message'))
@@ -61,13 +60,11 @@ class MessageController extends AbstractController
     }
 
     #[Route('/message/utilisateur', name: 'joueur_message')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function messageUtilisateur(ManagerRegistry $doctrine, Request $request): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         $em = $doctrine->getManager();
         $post = $request->request->all();
@@ -103,13 +100,11 @@ class MessageController extends AbstractController
     //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
     // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
     #[Route('/ajoutMedia', name: 'ajoutMedia')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function ajoutMedia(ManagerRegistry $doctrine, Request $request )
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         if($request->isMethod('post')){
             $em=$doctrine->getManager();
@@ -145,13 +140,11 @@ class MessageController extends AbstractController
     //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
     // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
     #[Route('/supprimerMedia', name: 'supprimerMedia')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function supprimerMedia(ManagerRegistry $doctrine, Request $request )
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
         
         if($request->isMethod('post')){
             $em=$doctrine->getManager();

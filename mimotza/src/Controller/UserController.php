@@ -39,16 +39,16 @@ use App\Repository\StatutRepository;
 use App\Entity\Utilisateur;
 use App\Repository\UtilisateurRepository;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 class UserController extends AbstractController
 {
     #[Route('/user', name: 'user')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function index(ManagerRegistry $regis): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         $form=$this->createFormBuilder()
         ->setAction($this->generateUrl('result'))
@@ -67,13 +67,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/{id}', name: 'particular_user')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function showUser(ManagerRegistry $regis, $id): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
@@ -93,13 +91,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/resultuser', name: 'result')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function showResearchResult(ManagerRegistry $regis): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         $request = Request::createFromGlobals();
         $username = $request->get('form');
@@ -119,6 +115,7 @@ class UserController extends AbstractController
             ]);
         }
     }
+
     #[Route('/inscription', name: 'inscription')]
     public function inscription(ManagerRegistry $doctrine): Response {
         $formInscription = $this->createFormBuilder()
@@ -142,15 +139,14 @@ class UserController extends AbstractController
                 'form' => $formInscription->createView()
             ]);
     }
+
     #[Route('/user/{id}/ban', name: 'ban')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function banUser(ManagerRegistry $regis, $id): Response 
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
-        
+
         $em = $regis->getManager();
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
