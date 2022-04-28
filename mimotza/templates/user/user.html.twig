@@ -35,7 +35,7 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
 <h1 class="profileTitle">{{user.username}}</h1>
 <section class="userProfile">
 <div class="avatarBox">
-    <img src="{{ user.avatar|e('html_attr') }}" alt="Cet utilisateur n'a pas d'avatar" width="200" height="200"/>
+    <img src="{{ user.avatar|e('html_attr') }}" alt="Cet utilisateur n'a pas d'avatar." width="200" height="200"/>
 </div>
 <div class="stat flexStats">
     <span>Nombre de parties jouées: {{user.parties|length}}</span><br>
