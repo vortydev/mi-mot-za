@@ -66,7 +66,7 @@ class UserController extends AbstractController
         ->setAction($this->generateUrl('adduser'))
         ->setMethod('POST')
         ->add('jsonFile', FileType::class, [
-            'label' => 'Fichier JSON',
+            'label' => ' ',
             'mapped' => false,
             'required' => false
         ])
@@ -76,7 +76,7 @@ class UserController extends AbstractController
                 'value' => 'jsonFile'
             ]
         ])
-        ->add('envoyer', SubmitType::class, ['label' => 'Envoyer Fichier'])
+        ->add('envoyer', SubmitType::class, ['label' => 'Envoyer'])
         ->getForm();
 
         $userRepository = $regis->getRepository(Utilisateur::class);
@@ -95,9 +95,11 @@ class UserController extends AbstractController
 
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
-            'list_users' => $users,
+            'list_users' => $paginator,
             'form_user'=>$formRecherche->createView(),
-            'form_file' => $addUserByFile->createView()
+            'form_file' => $addUserByFile->createView(),
+            'page'=>$page,
+            'nbPage'=>$pagesCount
         ]);
     }
 
@@ -239,7 +241,7 @@ class UserController extends AbstractController
             if ($post['form']['sender'] == 'formWebsite') {
 
                 $emailCheck = $userManager->findOneBy(['email' => $post['form']['email']]);
-                $usernameCheck = $userManager->findOneBy(['username' => $u['username']]);
+                $usernameCheck = $userManager->findOneBy(['username' => $post['form']['username']]);
 
                 if ($emailCheck == null && $usernameCheck == null) {
 
