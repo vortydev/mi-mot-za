@@ -7,9 +7,11 @@ use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Utilisateur;
 use App\Entity\Evenement;
 use App\Entity\Historique;
+use App\Entity\Statut;
 
 use App\Repository\UtilisateurRepository;
 use App\Repository\EvenementRepository;
+use App\Repository\StatutRepository;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,5 +90,53 @@ class EventController extends AbstractController
         }
 
         return $this->render('event/event.html.twig');
+    }
+
+    #[Route('/redirect/{userId}/{eventType}', name: 'app_eventRedirect')]
+    public function eventRedirect(ManagerRegistry $doctrine, int $userId, int $eventType): Response {
+
+        if (isset($userId)) {
+
+            $entityManager = $doctrine->getManager();
+            $userRepos = $entityManager->getRepository(Utilisateur::class);
+
+            $user = $userRepos->findOneBy(['id' => $userId]); 
+
+            switch ($eventType) {
+
+                case 2:
+                    if (isset($user) && $user->getIdStatut()->getId() == 1) {
+                        
+                        $statutRepos = $entityManager->getRepository(Statut::class);                        
+                        $statut = $statutRepos->findOneBy(['id' => 2]);
+
+                        $user->setIdStatut($statut);
+
+                        $entityManager->flush();
+
+                        return $this->render('event/redirect.html.twig', [
+                            'eventType' => $eventType
+                        ]);
+                    }
+                    break;
+                case 3:
+                    if (isset($user) && $user->getIdStatut()->getId() == 2) {
+
+                        $statutRepos = $entityManager->getRepositoru(Statut::class);
+                        $statut = $statutRepos->findOneBy(['id' => 3]);
+
+                        $user->setIdStatut($statut);
+
+                        $entityManager->flush();
+
+                        return $this->render('event/redirect.html.twig', [
+                            'eventType' => $eventType
+                        ]);
+                    }
+                    break;
+            }
+        }
+
+        return $this->redirectToRoute('app_index');  
     }
 }

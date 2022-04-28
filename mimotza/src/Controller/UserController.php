@@ -112,7 +112,7 @@ class UserController extends AbstractController
             ->add('sender', HiddenType::class, [
 
                     'attr' => [
-                        'value' => 'website'
+                        'value' => 'formWebsite'
                     ]
                 ]
             )
@@ -180,7 +180,7 @@ class UserController extends AbstractController
 
         // generate objects
         $roleUsager = null;
-        if (isset($post['form']['sender']) && $post['form']['sender'] == 'website') {
+        if (isset($post['form']['sender']) && $post['form']['sender'] == 'formWebsite') {
             $roleUsager = $roleManager->findOneBy(['role' => 'Administrateur']);
         }
         else {
@@ -215,54 +215,84 @@ class UserController extends AbstractController
         // $data = json_decode($request->getContent(), true);
         $data = json_decode($json, true);
 
-        // loop through array and load create each user
-        foreach ($data as $u) {
-            $emailCheck = $userManager->findOneBy(['email' => $u['email']]);
-            $usernameCheck = $userManager->findOneBy(['username' => $u['username']]);
+        $users = array();
 
-            if ($emailCheck == null && $usernameCheck == null) {
-                $user = new Utilisateur();
-
-                // load user data
-                $user->setPrenom($u['prenom'])
-                ->setNom($u['nom'])
-                ->setEmail($u['email'])
-                ->setUsername($u['username'])
-                ->setMdp(password_hash($u['mdp'], PASSWORD_DEFAULT))
+        if (isset($post['form']['sender']) && $post['form']['sender'] == 'formWebsite') {
+            $user = new Utilisateur();
+            $form = $post['form'];
+            $user->setPrenom($form['prenom'])
+                ->setNom($form['nom'])
+                ->setEmail($form['email'])
+                ->setUsername($form['username'])
+                ->setMdp($form['mdp'])
                 ->setAvatar(null)
+                ->setIdRole($roleUsager)
+                ->setIdStatut($statutInactif)
                 ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
 
-                // set role
-                if (!empty($u['role']) && $roleManager->findOneBy(['id' => $u['role']]) != null) {
-                    $user->setIdRole($roleManager->findOneBy(['id' => $u['role']]));
-                }
-                else {
-                    $user->setIdRole($roleUsager);
-                }
-                
-                // set statut
-                if (!empty($u['statut']) && $statutManager->findOneBy(['id' => $u['statut']]) != null) {
-                    $user->setIdStatut($statutManager->findOneBy(['id' => $u['statut']]));
-                }
-                else {
-                    $user->setIdStatut($statutInactif);
-                }
+            $entityManager->persist($user);
+        }
+        else {
+            // loop through array and load create each user
+            foreach ($data as $u) {
+                $emailCheck = $userManager->findOneBy(['email' => $u['email']]);
+                $usernameCheck = $userManager->findOneBy(['username' => $u['username']]);
 
-                if (!empty($u['avatar'])) {
-                    $user->setAvatar($u['avatar']);
-                }
+                if ($emailCheck == null && $usernameCheck == null) {
+                    $user = new Utilisateur();
 
-                // save user
-                $entityManager->persist($user);
+                    // load user data
+                    $user->setPrenom($u['prenom'])
+                    ->setNom($u['nom'])
+                    ->setEmail($u['email'])
+                    ->setUsername($u['username'])
+                    ->setMdp(password_hash($u['mdp'], PASSWORD_DEFAULT))
+                    ->setAvatar(null)
+                    ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
+
+                    // set role
+                    if (!empty($u['role']) && $roleManager->findOneBy(['id' => $u['role']]) != null) {
+                        $user->setIdRole($roleManager->findOneBy(['id' => $u['role']]));
+                    }
+                    else {
+                        $user->setIdRole($roleUsager);
+                    }
+                    
+                    // set statut
+                    if (!empty($u['statut']) && $statutManager->findOneBy(['id' => $u['statut']]) != null) {
+                        $user->setIdStatut($statutManager->findOneBy(['id' => $u['statut']]));
+                    }
+                    else {
+                        $user->setIdStatut($statutInactif);
+                    }
+
+                    if (!empty($u['avatar'])) {
+                        $user->setAvatar($u['avatar']);
+                    }
+
+                    array_push($users, $user);
+
+                    // save user
+                    $entityManager->persist($user);
+                }
             }
         }
 
         // push to bd
         $entityManager->flush();        
 
-        return $this->render('user/confirmation.html.twig', [
-            'controller_name' => 'poggers',
-            'form' => $post['form'],
-        ]);
+        if (isset($post['form']['sender']) && $post['form']['sender'] == 'formWebsite') {
+
+            return $this->render('user/confirmation.html.twig', [
+                'controller_name' => 'poggers',
+                'form' => $post['form'],
+            ]);
+        }
+        else {
+            return $this->render('user/confirmation.html.twig', [
+                'controller_name' => 'poggers',
+                'users' => $users
+            ]);
+        }
     }
 }

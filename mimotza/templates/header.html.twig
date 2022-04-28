@@ -1,10 +1,30 @@
 {% block header %}
 <header>
+
     <h1 class="headerTitle">Mi-Mot-Za</h1>
     <div class="conBox">
         <a class="connexionBtn connexion" href="http://localhost:8000/login">Connexion</a>
-        <a class="connexionBtn connexion" href="http://localhost:8000/logout">Déconnexion</a>
+        <a id="deconnexion" class="connexionBtn connexion" href="http://localhost:8000/logout">Déconnexion</a>
     </div>
+
+    {% if app.user.getId() is defined %}
+    <script>
+
+        function redirectToLogout() {
+            window.location.href = 'http://localhost:8000/logout';
+        }
+
+        deconnButton = document.getElementById("deconnexion");
+
+        deconnButton.addEventListener("click", function(event) {
+            event.preventDefault();
+
+            sendEvent({{app.user.getId()}}, 3, "L'utilisateur {{app.user.getUsername()}} s'est déconnecté le [date]");
+            const myTimeout = setTimeout(redirectToLogout, 5000);
+        });
+    </script>
+    {% endif %}
+
 </header>
 <nav>
     <ul class="flexnav">
