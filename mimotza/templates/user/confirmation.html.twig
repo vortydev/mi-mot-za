@@ -11,10 +11,17 @@
         {% endif %}#}
 
 <script>
-    userId = {{app.user.getId()}};                     // À remplacer par l'id de l'utilisateur connecté
-    eventType = 1;                  // Le type 1 est "inscription d'utilisateur"
+    userId = {{app.user.getId()}};
+    eventType = 1;
+{% if form is defined %}
     message = "{{form.username}} s'est inscrit le [date]";           // Les "détails" de l'événement (le message à envoyer dans l'accueil)
     sendEvent(userId, eventType, message);
+{% elseif users is defined %}
+    {% for user in users %}
+        message = "{{user.getUsername()}} s'est inscrit le [date]";
+        sendEvent(userId, eventType, message);
+    {% endfor %}
+{% endif %}
 </script>
 
 <h1>Merci de vous être inscrit!</h1>

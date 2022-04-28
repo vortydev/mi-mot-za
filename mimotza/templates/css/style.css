@@ -171,7 +171,7 @@ nav {
 
 /* MAIN */
 main {
-    width: 60%;
+    width: 750px;
     margin: auto;
     padding-bottom: 50px;
 }
@@ -189,6 +189,11 @@ button:hover {
     background-color: var(--bleua);
 }
 
+form, input {
+    border-radius: 4px;
+    border: none;
+}
+
 /* FOOTER */
 footer {
     margin: 0;
@@ -204,20 +209,63 @@ footer {
 }
 
 /* CONNEXION */
-.loginTitle, .userTitle {
+.loginTitle, .userTitle, .logTitle, .wordTitle {
     text-align: center;
     margin-bottom: 20px;
 }
 
 .loginForm {
-    width: 30%;
+    width: 40%;
     margin: auto;
+    margin-top: 30px;
+    text-align: center;
+    border: var(--bleu) 2px solid;
+    padding: 20px;
+}
+
+.loginForm label {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.loginForm input {
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
 }
 
 .loginBtn {
+    display:inline;
     width: 150px;
-    /* height: 50px; */
     margin: auto;
+    margin-top: 20px;
+}
+
+/* HISTORIQUE */
+.logBox {
+    width: 75%;
+    margin: auto;
+    /* margin-top: 30px; */
+    border: var(--bleu) 2px solid;
+    background-color: var(--gris);
+    border-radius: 4px;
+    /* padding: 10px; */
+}
+
+.logBox ul {
+    display: flex;
+    flex-direction: column;
+}
+
+.logBox li {
+    width: 100%;
+    padding: 5px;
+    padding-left: 10px;
+}
+
+.logBox li:hover {
+    background-color: var(--grisa);
+    border-radius: 4px;
 }
 
 /* USERS */
@@ -248,12 +296,13 @@ footer {
 }
 
 .flexUserSearch div > div:first-of-type {
-    padding-top: 2.5px;
+    padding-top: 5px;
     padding-right: 10px;
 }
 
 .flexUserSearch div > button {
     width: 200px;
+    display: inline-block;
 }
 
 .flexUserRes {
@@ -284,4 +333,80 @@ footer {
 
 .userLink {
     width: 30%;
+}
+
+/* WORD */
+
+.wordAdd {
+    width: 60%;
+    margin: auto;
+    flex-direction: row;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.wordAdd > form {
+    width: 100%;
+}
+
+.wordAdd > form > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.wordAdd div > div {
+    width: 100%;
+}
+
+.wordAdd div > input {
+    width: 100%;
+    margin: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.wordAdd div > div:first-of-type {
+    padding-top: 2.5px;
+    padding-right: 10px;
+}
+
+.wordAdd div > button {
+    width: 200px;
+}
+
+.wordDic {
+    width: 70%;
+    flex-direction: column;
+    margin: auto;
+    background-color: var(--gris);
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.wordProp {
+    width: 70%;
+    flex-direction: column;
+    margin: auto;
+    margin-top: 20px;
+    background-color: var(--gris);
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.wordDicDiv {
+    width: 100%;
+    border-radius: 4px;
+    border: var(--bleu) 2px solid;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+.wordDicWord {
+    margin-right: auto;
+}
+
+.wordStatBtn {
+    width: 30%;
+    text-align: center;
+    
 }
