@@ -17,7 +17,8 @@ class SecurityController extends AbstractController
 
             return $this->redirectToRoute('app_eventRedirect', [
                 'userId' => $this->getUser()->getId(),
-                'eventType' => 2
+                'eventType' => 2,
+                'whereTo' => '|'
             ]);
         }
 

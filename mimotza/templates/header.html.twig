@@ -4,27 +4,9 @@
     <h1 class="headerTitle">Mi-Mot-Za</h1>
     
     {% if app.user %}
-        <a class="connexionBtn deconnexion" href="http://localhost:8000/logout">Déconnexion</a>
+        <a class="connexionBtn deconnexion" href="http://localhost:8000/redirect/{{app.user.getId()}}/3/|logout">Déconnexion</a>
     {% else %}
         <a class="connexionBtn connexion" href="http://localhost:8000/login">Connexion</a>
-    {% endif %}
-
-    {% if app.user.getId() is defined %}
-    <script>
-
-        function redirectToLogout() {
-            window.location.href = 'http://localhost:8000/logout';
-        }
-
-        deconnButton = document.getElementsByClassName("deconnexion")[0];
-
-        deconnButton.addEventListener("click", function(event) {
-            event.preventDefault();
-
-            sendEvent({{app.user.getId()}}, 3, "L'utilisateur {{app.user.getUsername()}} s'est déconnecté le [date]");
-            const myTimeout = setTimeout(redirectToLogout, 5000);
-        });
-    </script>
     {% endif %}
 </header>
 <nav>

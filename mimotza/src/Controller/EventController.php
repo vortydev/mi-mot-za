@@ -92,8 +92,8 @@ class EventController extends AbstractController
         return $this->render('event/event.html.twig');
     }
 
-    #[Route('/redirect/{userId}/{eventType}', name: 'app_eventRedirect')]
-    public function eventRedirect(ManagerRegistry $doctrine, int $userId, int $eventType): Response {
+    #[Route('/redirect/{userId}/{eventType}/{whereTo}', name: 'app_eventRedirect')]
+    public function eventRedirect(ManagerRegistry $doctrine, int $userId, int $eventType, string $whereTo): Response {
 
         if (isset($userId)) {
 
@@ -102,10 +102,12 @@ class EventController extends AbstractController
 
             $user = $userRepos->findOneBy(['id' => $userId]); 
 
+            $whereTo = preg_replace('/\|/', '/', $whereTo);
+
             switch ($eventType) {
 
                 case 2:
-                    if (isset($user) && $user->getIdStatut()->getId() == 1) {
+                    if (isset($user) && $user->getIdStatut()->getId() != 2) {
                         
                         $statutRepos = $entityManager->getRepository(Statut::class);                        
                         $statut = $statutRepos->findOneBy(['id' => 2]);
@@ -115,14 +117,15 @@ class EventController extends AbstractController
                         $entityManager->flush();
 
                         return $this->render('event/redirect.html.twig', [
-                            'eventType' => $eventType
+                            'eventType' => $eventType,
+                            'whereTo' => $whereTo
                         ]);
                     }
                     break;
                 case 3:
                     if (isset($user) && $user->getIdStatut()->getId() == 2) {
 
-                        $statutRepos = $entityManager->getRepositoru(Statut::class);
+                        $statutRepos = $entityManager->getRepository(Statut::class);
                         $statut = $statutRepos->findOneBy(['id' => 3]);
 
                         $user->setIdStatut($statut);
@@ -130,7 +133,8 @@ class EventController extends AbstractController
                         $entityManager->flush();
 
                         return $this->render('event/redirect.html.twig', [
-                            'eventType' => $eventType
+                            'eventType' => $eventType,
+                            'whereTo' => $whereTo
                         ]);
                     }
                     break;
