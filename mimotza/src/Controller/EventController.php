@@ -1,5 +1,22 @@
 <?php
-
+/****************************************
+Fichier : EventController.php
+Auteurs : François-Nicolas Gitzhofer
+Fonctionnalité : Classe EventController qui permet la gestion d'événements
+Date : 21/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications (Approximatif):
+Date: 21/04/2022 Nom: François-Nicolas Gitzhofer Description: Ajout de la méthode event
+Date: 22/04/2022 Nom: François-Nicolas Gitzhofer Description: Amélioration de la méthode event
+Date: 24/04/2022 Nom: François-Nicolas Gitzhofer Description: Ajout de la méthode redirect
+Date: 25/04/2022 Nom: François-Nicolas Gitzhofer Description: Amélioration de la gestion d'event de connexion
+Date: 26/04/2022 Nom: François-Nicolas Gitzhofer Description: Changement de la gestion d'event de connexion avec un switch case
+Date: 27/04/2022 Nom: François-Nicolas Gitzhofer Description: Ajout de la gestion d'event de déconnexion + finalisation EventController
+...
+=========================================================
+****************************************/
 namespace App\Controller;
 
 use Doctrine\Persistence\ManagerRegistry;
@@ -7,9 +24,11 @@ use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Utilisateur;
 use App\Entity\Evenement;
 use App\Entity\Historique;
+use App\Entity\Statut;
 
 use App\Repository\UtilisateurRepository;
 use App\Repository\EvenementRepository;
+use App\Repository\StatutRepository;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,5 +107,60 @@ class EventController extends AbstractController
         }
 
         return $this->render('event/event.html.twig');
+    }
+
+    // Le premier paramètre est l'id de l'utilisateur
+    // Le deuxième paramètre est l'id du type d'événement
+    // Le troisième paramètre est où la page doit
+    #[Route('/redirect/{userId}/{eventType}/{whereTo}', name: 'app_eventRedirect')]
+    public function eventRedirect(ManagerRegistry $doctrine, int $userId, int $eventType, string $whereTo): Response {
+
+        if (isset($userId)) {
+
+            $entityManager = $doctrine->getManager();
+            $userRepos = $entityManager->getRepository(Utilisateur::class);
+
+            $user = $userRepos->findOneBy(['id' => $userId]); 
+
+            $whereTo = preg_replace('/\|/', '/', $whereTo);
+
+            switch ($eventType) {
+
+                case 2:
+                    if (isset($user) && $user->getIdStatut()->getId() != 2) {
+                        
+                        $statutRepos = $entityManager->getRepository(Statut::class);                        
+                        $statut = $statutRepos->findOneBy(['id' => 2]);
+
+                        $user->setIdStatut($statut);
+
+                        $entityManager->flush();
+
+                        return $this->render('event/redirect.html.twig', [
+                            'eventType' => $eventType,
+                            'whereTo' => $whereTo
+                        ]);
+                    }
+                    break;
+                case 3:
+                    if (isset($user) && $user->getIdStatut()->getId() == 2) {
+
+                        $statutRepos = $entityManager->getRepository(Statut::class);
+                        $statut = $statutRepos->findOneBy(['id' => 3]);
+
+                        $user->setIdStatut($statut);
+
+                        $entityManager->flush();
+
+                        return $this->render('event/redirect.html.twig', [
+                            'eventType' => $eventType,
+                            'whereTo' => $whereTo
+                        ]);
+                    }
+                    break;
+            }
+        }
+
+        return $this->redirectToRoute('app_index');  
     }
 }
