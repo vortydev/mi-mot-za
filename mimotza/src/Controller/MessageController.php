@@ -60,9 +60,6 @@ class MessageController extends AbstractController
     }
 
     #[Route('/message/utilisateur', name: 'joueur_message')]
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     public function messageUtilisateur(ManagerRegistry $doctrine, Request $request): Response
     {
 
@@ -100,9 +97,6 @@ class MessageController extends AbstractController
     //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
     // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
     #[Route('/ajoutMedia', name: 'ajoutMedia')]
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     public function ajoutMedia(ManagerRegistry $doctrine, Request $request ) : Response
     {
 
@@ -159,9 +153,6 @@ class MessageController extends AbstractController
     //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
     // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
     #[Route('/supprimerMedia', name: 'supprimerMedia')]
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     public function supprimerMedia(ManagerRegistry $doctrine, Request $request )
     {
         

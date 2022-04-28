@@ -259,13 +259,13 @@ footer {
     flex-direction: column-reverse;
 }
 
-.logBox li {
+.logBox li, .logBox p {
     width: 100%;
     padding: 5px;
     padding-left: 10px;
 }
 
-.logBox li:hover {
+.logBox li:hover, .logBox p:hover {
     background-color: var(--grisa);
     border-radius: 4px;
 }

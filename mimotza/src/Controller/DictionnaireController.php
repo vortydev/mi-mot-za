@@ -202,9 +202,6 @@ class DictionnaireController extends AbstractController
 
     //Gere une requete api provenant de l'application mobile et ajoute une suggestion dans la bd
     #[Route('/ajoutSuggestion', name: 'ajoutSuggestion')]
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request ) : Response
     {
         if($request->isMethod('post')){
