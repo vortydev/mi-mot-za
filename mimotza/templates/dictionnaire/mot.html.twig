@@ -24,7 +24,7 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
 
 <main>
 <h1>{{ mot }}</h1>
-<button type="button" onclick="window.location.href='/'">Supprimer</button>
+<button type="button" onclick="window.location.href='/supprimerMot?idMot={{idMot}}'">Supprimer</button>
 <div class="stat">
     <span>Nombre de fois que le mot a été joué: {{ nbFoisJoue }}</span><br>
     <span>Nombre de parties reussi avec ce mot : {{ partiesGagnesMot }}</span><br>
