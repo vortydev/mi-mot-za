@@ -9,6 +9,7 @@ use App\Entity\EtatSuggestion;
 use App\Entity\Utilisateur;
 use App\Entity\Message;
 use App\Entity\Thread;
+use App\Entity\Partie;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -116,10 +117,36 @@ class DictionnaireController extends AbstractController
         $motrepo = $em->getRepository(Mot::class);
         $mot = $motrepo->find($idMot);
 
-        return $this->render('dictionnaire/statistiqueMot.html.twig', [
+        $parties = $em->getRepository(Partie::class)->findAll();
+        $nbParties = 1;
+        $tempsMoyen = new \DateTime('0000-01-01 0:0:0');
+        $tempsMoyen->format('H:i:s');
+        $tentativesMoyen = 0;
+        $partiesGagnesMot = 0;
+        for($i = 0; $i < count($parties); $i++){
+            if($partie->getMot() == $mot){
+                $nbParties ++;
+                if($partie->getWin()){
+                    $partiesGagnesMot++;
+                    $tempsMoyen->add($partie->getTemps()->format('H:i:s'));
+                    $tentativesMoyen += $partie[$i]->getScore();
+                }
+            }
+
+        }
+
+        $tempsMoyenint = $tempsMoyen->getTimestamp();
+        $tempsMoyenint = $tempsMoyenint/$nbParties;
+        $tentativesMoyen = $tentativesMoyen / $nbParties;
+        $tempsMoyen = date('H:i:s', $tempsMoyenint);
+
+
+        return $this->render('dictionnaire/mot.html.twig', [
             'mot' => $mot->getMot(),
-            'idMot' => $idMot,
-            'nbFoisJoue' => 1000
+            'nbFoisJoue' => $nbParties - 1,
+            'tempMoyen' => $tempsMoyen,
+            'tentativesMoyen' => $tentativesMoyen,
+            'partiesGagnesMot' => $partiesGagnesMot
         ]);
         
     }
