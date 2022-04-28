@@ -34,9 +34,14 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\AjouterMotType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class DictionnaireController extends AbstractController
 {
+
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     //Accueil du gestion de mot qui affiche les mots et les suggestion des mts
     #[Route('/GestionDuJeu', name: 'accueil_gestionDuJeu')]
     public function index(ManagerRegistry $doctrine, Request $request): Response
@@ -170,7 +175,7 @@ class DictionnaireController extends AbstractController
 
     //Gere une requete api provenant de l'application mobile et ajoute une suggestion dans la bd
     #[Route('/ajoutSuggestion', name: 'ajoutSuggestion')]
-    public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request )
+    public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request ) : Response
     {
         if($request->isMethod('post')){
             $post = $request->request->all();
@@ -188,6 +193,10 @@ class DictionnaireController extends AbstractController
             $suggestion->setIdLangue($langue[0]);
             $em->persist($suggestion);
             $em->flush();
+
+            $response = new Response();
+            $response->setStatusCode(200);
+            return $response;
         }
     }
 
