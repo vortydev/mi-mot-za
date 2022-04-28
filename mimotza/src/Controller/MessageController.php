@@ -1,6 +1,23 @@
 <?php
 
 namespace App\Controller;
+
+/****************************************
+Fichier : MessageController.php
+Auteur : Alberto
+Fonctionnalité : S'occupe de gèrer les mots en relation avec le jeu
+Date : 13 avril 2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+13 avril 2022, Alberto, Gestion d'affichage des messages
+17 avril 2022, Alberto, Gestion d'ajout et suppresion de suggestions d'un message ou thread
+27 avril 2022, Alberto, ajout du formulaire for filtrer les message ou threads par utilisateur
+...
+=========================================================
+****************************************/
+
 use App\Entity\Message;
 use App\Entity\Utilisateur;
 use App\Entity\Thread;
@@ -45,6 +62,12 @@ class MessageController extends AbstractController
         $post = $request->request->all();
         $username = $request->get('form');
         $user = $doctrine->getRepository(Utilisateur::class)->findBy(array('username' =>$username));
+
+        if(!$user){
+            $session = $request->getSession();
+            $session->getFlashBag()->add('resultat', "l'utilisateur : ".$username['username']." n'existe pas");
+            return $this->redirect($this->generateURL('app_message'));
+        }
         
         $listeMessages = $doctrine->getRepository(Message::class)->findBy(array('idUser' =>$user[0]->getId()));
         $listeThread = $doctrine->getRepository(Thread::class)->findBy(array('idUser' => $user[0]->getId()));

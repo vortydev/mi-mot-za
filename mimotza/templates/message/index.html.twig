@@ -23,6 +23,9 @@ Date: 27/04/2022 Nom: Étienne Ménard Description: Modification du titre de la 
 <main>
     <h1 class="userTitle">Messages</h1>
     <h1 class="userTitle">{{userName}}</h1>
+    {% for element in app.flashes('resultat') %}
+        <h1> {{element}} </h1>
+    {% endfor %}
 
     <section class="flexUserSearch">
         {{form(form_user)}}

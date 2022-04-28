@@ -1,6 +1,23 @@
 <?php
-
 namespace App\Controller;
+
+
+/****************************************
+Fichier : DictionnaireController.php
+Auteur : Alberto
+Fonctionnalité : S'occupe de gèrer les mots en relation avec le jeu
+Date : 13 avril 2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+13 avril 2022, Alberto, Gestion d'affichage des mots
+17 avril 2022, Alberto, Gestion d'ajout et suppresion de suggestions de mot
+27 avril 2022, Alberto, Gestion des statistiques des mots
+
+...
+=========================================================
+****************************************/
 
 use App\Entity\Mot;
 use App\Entity\Langue;
@@ -35,7 +52,7 @@ class DictionnaireController extends AbstractController
             $em->persist($mot);
             $em->flush();
             $session = $request->getSession();
-            $session->getFlashbag()->add('action',"Le mot ".$mot->getMot()." a été ajouté");
+            $session->getFlashBag()->add('action', "Le mot : ".$mot->getMot()."a été ajouté");
             return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
         }
         return $this->render('dictionnaire/index.html.twig', [
@@ -174,65 +191,6 @@ class DictionnaireController extends AbstractController
         }
     }
 
-    //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
-    // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
-    #[Route('/ajoutMedia', name: 'ajoutMedia')]
-    public function ajoutMedia(ManagerRegistry $doctrine, Request $request )
-    {
-        if($request->isMethod('post')){
-            $em=$doctrine->getManager();
-            $post = $request->request->all();
-            $message = new Message;
-
-            $utilisateur =$doctrine->getRepository(Utilisateur::class)->find($post['idUser']);
-            
-            $message->setIdUser($utilisateur);
-            $message->setDateEmission(new \DateTime('now'));
-            $message->setContenu($post['contenu']);
-            if(isset($post['idMessageParent'])){
-                $messageParent = $doctrine->getRepository(Message::class)->find($post['idMessageParent']);
-                $message->setIdParent($messageParent);
-            }
-            $em->persist($message);
-            $em->flush();
-
-            if(isset($post['thread']) && !(isset($post['idMessageParent']))){
-                $thread = new Thread;
-                $thread->setIdUser($utilisateur);
-                $thread->setIdMessage($message);
-                $thread->setDateEmission(new \DateTime('now'));
-                $thread->setTitre($post['titre']);
-                $em->persist($thread);
-                $em->flush();
-            }
-        }
-        
-    }
-
-
-    //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
-    // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
-    #[Route('/supprimerMedia', name: 'supprimerMedia')]
-    public function supprimerMedia(ManagerRegistry $doctrine, Request $request )
-    {
-        if($request->isMethod('post')){
-            $em=$doctrine->getManager();
-            $post = $request->request->all();
-            $message = new Message;
-            if ($post['supprimer'] == 'Thread'){
-                $thread = $doctrine->getRepository(Thread::class)->find($post['idThread']);
-                $thread->setTitre('Ce contenu a été par l\'Utilisateur');
-                $message =$thread->getIdMessage();
-                $message->setContenu('Ce contenu a été par l\'Utilisateur');
-            }
-            if ($post['supprimer'] == 'Message'){
-                $message =$doctrine->getRepository(Message::class)->find($post['idMessage']);
-                $message->setContenu('Ce contenu a été par l\'Utilisateur');
-            }
-            $em->persist($message);
-            $em->flush();
-        }
-        
-    }
-
 }
+
+
