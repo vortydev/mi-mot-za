@@ -34,11 +34,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\AjouterMotType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class DictionnaireController extends AbstractController
 {
+
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     //Accueil du gestion de mot qui affiche les mots et les suggestion des mts
     #[Route('/GestionDuJeu', name: 'accueil_gestionDuJeu')]
     /**
@@ -53,13 +58,27 @@ class DictionnaireController extends AbstractController
         $listeMotsSuggere = $doctrine->getRepository(Suggestion::class)->findBy(array('idEtatSuggestion' => 1));
         $mot = new Mot;
         $form = $this->createform(AjouterMotType::class, $mot);
+        $session = $request->getSession();
         $form->handleRequest($request);
+       
         if($request->isMethod('post') && $form->isValid()){
-            $em->persist($mot);
-            $em->flush();
-            $session = $request->getSession();
-            $session->getFlashBag()->add('action', "Le mot : ".$mot->getMot()."a été ajouté");
-            return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
+            $duplicate = $doctrine->getRepository(Mot::class)->findBy(array('mot' => $mot->getMot()));
+            
+           
+            if(count($duplicate) > 0){
+                $session->getFlashBag()->add('action', "Le mot : ".$mot->getMot()."est deja sur la bd");
+
+                return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
+            }else {
+                $em->persist($mot);
+                $em->flush();
+                $session = $request->getSession();
+                $session->getFlashBag()->add('action', "Le mot : ".$mot->getMot()."a été ajouté");
+              
+
+                return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
+            }
+            
         }
         return $this->render('dictionnaire/index.html.twig', [
             'controller_name' => 'DictionnaireController',
@@ -129,7 +148,7 @@ class DictionnaireController extends AbstractController
             $suggestion->setIdEtatSuggestion($etat[0]);
             $mot->setIdLangue($langue);
             $mot->setDateAjout(new \DateTime('now'));
-            $mot->setMot($suggestion->getMotSuggere());
+            $mot->setMot(strtoupper($suggestion->getMotSuggere()));
             $em->persist($mot);
             $em->flush();
             $session->getFlashBag()->add('delete', "le mot suggeré : ".$suggestion->getMotSuggere()." a été accepté");
@@ -181,7 +200,8 @@ class DictionnaireController extends AbstractController
             'nbFoisJoue' => $nbParties - 1,
             'tempMoyen' => $tempsMoyen,
             'tentativesMoyen' => $tentativesMoyen,
-            'partiesGagnesMot' => $partiesGagnesMot
+            'partiesGagnesMot' => $partiesGagnesMot,
+            'idMot' => $mot->getId()
         ]);
         
     }
@@ -191,9 +211,8 @@ class DictionnaireController extends AbstractController
     /**
     *  @Security("is_granted('ROLE_ADMIN')")
     */
-    public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request )
+    public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request ) : Response
     {
-        
         if($request->isMethod('post')){
             $post = $request->request->all();
             $suggestion = new Suggestion;
@@ -204,13 +223,40 @@ class DictionnaireController extends AbstractController
             $user =  $doctrine->getRepository(Utilisateur::class)->find($post['idUser']);
             
             $suggestion->setIdUser($user);
-            $suggestion->setMotSuggere($post['mot']);
+            $suggestion->setMotSuggere($suggestion->getMotSuggere($post['mot']));
             $suggestion->setIdEtatSuggestion($etat[0]);
             $suggestion->setDateEmission(new \DateTime('now'));
             $suggestion->setIdLangue($langue[0]);
-            $em->persist($suggestion);
-            $em->flush();
+            
+            try {
+                $em->persist($suggestion);
+                $em->flush();
+            } catch(Exception $e) {
+                $response = new Response();
+                $response->setStatusCode(400);
+            return $response;
+            }
+
+            $response = new Response();
+            $response->setStatusCode(200);
+            return $response;
         }
+    }
+
+    
+    #[Route('/supprimerMot', name: 'supprimerMot')]
+    public function supprimerMot(ManagerRegistry $doctrine, Request $request ) : Response {
+        $session = $request->getSession();
+        $idMot = $_GET['idMot'];
+        $mot=$doctrine->getRepository(Mot::class)->find($idMot);
+        $em=$doctrine->getManager();
+        $session->getFlashBag()->add('action', "le mot : ".$mot->getMot()." a été accepté");
+
+        $em->remove($mot);
+        $em->flush();
+
+        return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
+    
     }
 
 }

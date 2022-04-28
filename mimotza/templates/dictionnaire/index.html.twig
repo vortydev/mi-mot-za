@@ -29,7 +29,7 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
     <h2 class="wordAddSubtitle">Ajout de mots</h2>
     <section class="wordAddForm">
         
-        {% for message in app.flashes('action') %}
+        {% for message in app.session.flashbag.get('action') %}
             <h3>{{ message }}</h3>
         {% endfor %}
         
@@ -55,7 +55,7 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
             {# sendEvent(1, 1, "testdelete"); #}
         </script>
     {% endif %}
-    {% for message in app.flashes('delete') %}
+    {% for message in app.session.flashbag.get('action') %}
         <h3>{{ message }}</h3>
     {% endfor %}
     
