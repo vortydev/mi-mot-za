@@ -5,7 +5,8 @@ use App\Entity\Message;
 use App\Entity\Utilisateur;
 use App\Entity\Thread;
 
-
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,29 +19,49 @@ class MessageController extends AbstractController
     #[Route('/message', name: 'app_message')]
     public function index(ManagerRegistry $doctrine, Request $request): Response
     {
-        //$form = $this->createFormBuilder()
-        //->setAction($this->generateUrl('app_message'))
-        //$em = $doctrine->getManager();
+      
+        $form=$this->createFormBuilder()
+        ->setAction($this->generateUrl('joueur_message'))
+        ->setMethod('POST')
+        ->add('username', SearchType::class, ['label'=>' '])
+        ->add('envoyer', SubmitType::class, ['label'=>'Filtrer par joueur'])
+        ->getForm();
+
         $listeMessages = $doctrine->getRepository(Message::class)->findALL();
         $listeThreads = $doctrine->getRepository(Thread::class)->findALL();
         return $this->render('message/index.html.twig', [
             'controller_name' => 'MessageController',
             'listeMessages' => $listeMessages,
-            'listeThread' =>$listeThreads
+            'listeThread' => $listeThreads,
+            'form_user'=> $form->createView(),
+            'userName' => ''
         ]);
     }
 
-    #[Route('/message/utilisateur/{idUser}', name: 'joueur_message')]
-    public function messageUtilisateur(ManagerRegistry $doctrine, Request $request,$idUser): Response
+    #[Route('/message/utilisateur', name: 'joueur_message')]
+    public function messageUtilisateur(ManagerRegistry $doctrine, Request $request): Response
     {
         $em = $doctrine->getManager();
-        $listeMessages = $doctrine->getRepository(Message::class)->findBy(array('idUser' => $idUser));
-        $listeThread = $doctrine->getRepository(Thread::class)->findBy(array('idUser' => $idUser));
+        $post = $request->request->all();
+        $username = $request->get('form');
+        $user = $doctrine->getRepository(Utilisateur::class)->findBy(array('username' =>$username));
+        
+        $listeMessages = $doctrine->getRepository(Message::class)->findBy(array('idUser' =>$user[0]->getId()));
+        $listeThread = $doctrine->getRepository(Thread::class)->findBy(array('idUser' => $user[0]->getId()));
+
+        $form=$this->createFormBuilder()
+        ->setAction($this->generateUrl('joueur_message'))
+        ->setMethod('POST')
+        ->add('username', SearchType::class, ['label'=>' '])
+        ->add('envoyer', SubmitType::class, ['label'=>'Filtrer par joueur'])
+        ->getForm();
+
         return $this->render('message/index.html.twig', [
             'controller_name' => 'MessageController',
             'listeMessages' => $listeMessages,
-            'listeThread' =>$listeThreads
-
+            'listeThread' =>$listeThread,
+            'form_user'=>$form->createView(),
+            'userName' => $user[0]->getUsername()
         ]);
     }
 
