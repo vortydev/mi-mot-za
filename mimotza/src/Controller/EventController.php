@@ -127,6 +127,12 @@ class EventController extends AbstractController
             switch ($eventType) {
 
                 case 1:         // Inscription Utilisateur
+
+                    return $this->render('event/redirect.html.twig', [
+                        'eventType' => $eventType,
+                        'whereTo' => $whereTo
+                    ]);
+
                     break;
                 case 2:         // Activation Utilisateur
                     if (isset($user) && $user->getIdStatut()->getId() != 2) {
