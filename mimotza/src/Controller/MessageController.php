@@ -31,8 +31,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-
 class MessageController extends AbstractController
 {
 

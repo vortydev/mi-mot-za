@@ -95,9 +95,11 @@ class UserController extends AbstractController
 
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
-            'list_users' => $users,
+            'list_users' => $paginator,
             'form_user'=>$formRecherche->createView(),
-            'form_file' => $addUserByFile->createView()
+            'form_file' => $addUserByFile->createView(),
+            'page'=>$page,
+            'nbPage'=>$pagesCount
         ]);
     }
 
