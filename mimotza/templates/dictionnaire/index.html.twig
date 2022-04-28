@@ -44,26 +44,32 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
             <a href="/GestionDuJeu/{{element.id}}">Statistiques</a>
         </div>
         {% endfor %}
+        <div class="dicNav"></div>
     </section>
 
-    <section class="wordProp">
-    <h4> Mots proposés: </h4>
+    <h2 class="wordPropSubtitle">Mots proposés</h2>
+    <section class="flexWordProp">
+
     {% if app.flashes('delete') %}
         <script>
-            sendEvent(1, 1, "testdelete");
+            {# sendEvent(1, 1, "testdelete"); #}
         </script>
     {% endif %}
     {% for message in app.flashes('delete') %}
-        <h2>{{ message }}</h2>
+        <h3>{{ message }}</h3>
     {% endfor %}
-    <ul>
-        {% for element in listeMotsSuggere %}
-            <li>{{element.motsuggere}}
+    
+    {% for element in listeMotsSuggere %}
+    <div class="flexWordSugg">
+        <p>{{element.motsuggere}}</p>
+        <div class="wordSuggBtn">
             <button type="button" class="btn btn-success" onclick="window.location.href='/GestionDuJeu/acceptSuggestion?id={{element.id}}'">Accepter</button>
             <button type="button" class="btn btn-danger" onclick="window.location.href='/GestionDuJeu/refuseSuggestion?id={{element.id}}'">Refuser</button>
-            </li>
-        {% endfor %}
-    </ul>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="propNav"></div>
     </section>
 </main>
         

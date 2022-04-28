@@ -341,7 +341,7 @@ footer {
 }
 
 /* WORD */
-.wordAddSubtitle, .wordDicSubtitle {
+.wordAddSubtitle, .wordDicSubtitle, .wordPropSubtitle {
     margin-bottom: 10px;
     text-align: center;
 }
@@ -404,6 +404,7 @@ footer {
 .flexWordDic {
     width: 70%;
     margin: auto;
+    margin-bottom: 20px;
     background-color: var(--gris);
     border-radius: 4px;
     padding: 20px;
@@ -411,7 +412,7 @@ footer {
     flex-direction: row;
 }
 
-.flexWord {
+.flexWord  {
     flex-direction: row;
     width: 48%;
     margin: auto;
@@ -422,7 +423,7 @@ footer {
     text-align: center;
 }
 
-.flexWord:hover {
+.flexWord:hover, .flexWordSugg:hover {
     background-color: var(--grisa);
 }
 
@@ -434,16 +435,40 @@ footer {
     margin-left: 5px;
 }
 
-.flexWord * {
+.flexWord > p, .flexWord > a {
     width: 50%;
 }
 
-/* .wordProp {
-    width: 70%;
-    flex-direction: column;
+/* WORD SUGGESTIONS */
+.flexWordProp {
+    width: 60%;
     margin: auto;
-    margin-top: 20px;
+    margin-bottom: 20px;
     background-color: var(--gris);
     border-radius: 4px;
     padding: 20px;
-} */
+    padding-bottom: 10px;
+    flex-direction:  column;
+}
+
+.flexWordSugg {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: var(--bleu) 2px solid;
+}
+
+.flexWordSugg > p {
+    padding-top: 5px;
+    width: 45%;
+}
+
+.flexSuggBtn {
+    width: 55%;
+}
+
+.flexSuggBtn > button {
+    display: inline-block;
+}
