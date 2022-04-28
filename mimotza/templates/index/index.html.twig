@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+<!-- /****************************************
+Fichier : index.html.twig
+Auteurs : François-Nicolas Ghitzofer, Étienne Ménard
+Fonctionnalité : Index et historique des évènements du site.
+Date : 26/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
+...
+=========================================================
+****************************************/-->
+<main>
+<h1 class="logTitle">Historique</h1>
+
+<div class="logBox">
+    <ul>
+        {% for event in historique %}
+            <li>
+                {{event.getDetail()}}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+</main>
+{% endblock %}

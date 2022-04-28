@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Erreur 404{% endblock %}
+
+{% block body %}
+<!-- /****************************************
+Fichier : error.html.twig
+Auteur : Isabelle Rioux
+Fonctionnalité : Template d'affichage de la liste d'utilisateurs
+Date : 26/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+Date: 26/04/2022 Nom: Isabelle Rioux Description: affichage d'une erreur si un joueur n'éxiste pas
+...
+=========================================================
+****************************************/-->
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<main>
+<h1 class="erreur">Erreur 404!</h1>
+<h2>Il est possible que le joueur que vous cherchez n'est pas dans la base de données... Vérifiez votre recherche et réessayez!</h2>
+</main>
+{% endblock %}

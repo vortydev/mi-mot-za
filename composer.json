@@ -1,0 +1,13 @@
+{
+    "require-dev": {
+        "symfony/maker-bundle": "^1.38"
+    },
+    "require": {
+        "symfony/runtime": "^6.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/runtime": true
+        }
+    }
+}

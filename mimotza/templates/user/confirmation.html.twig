@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmation{% endblock %}
+
+{% block body %}
+<main>
+        {#{% if form.mdp %}
+            <script>
+                sendEvent(1, 1, "testUser");
+            </script>
+        {% endif %}#}
+
+<script>
+
+    body = document.getElementsByTagName("BODY")[0];
+    body.style.display = "none";
+
+    document.addEventListener('historicSent', function() {
+        body.removeAttribute("style");
+    });
+
+    userId = {{app.user.getId()}};
+    eventType = 1;
+{% if form is defined %}
+    message = "{{form.username}} s'est inscrit le [date]";           // Les "détails" de l'événement (le message à envoyer dans l'accueil)
+    sendEvent(userId, eventType, message);
+{% elseif users is defined %}
+
+    {% for user in users %}
+        message = "{{user.getUsername()}} s'est inscrit le [date]";
+        sendEvent(userId, eventType, message);
+    {% endfor %}
+
+{% endif %}
+</script>
+
+<h1>Merci de vous être inscrit!</h1>
+</main>
+{% endblock %}

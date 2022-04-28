@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{user.username}}{% endblock %}
+
+{% block body %}
+<!-- /****************************************
+Fichier : user.html.twig
+Auteurs : Isabelle Rioux, Étienne Ménard
+Fonctionnalité : Template d'affichage d'un seul utilisateur
+Date : 21/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+Date: 21/04/2022 Nom: Isabelle Rioux Description: Gestion des variables de statistiques
+Date: 22/04/2022 Nom: Isabelle Rioux Description: Correction de l'affichage du temps de jeu
+Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement avec la base de données
+Date: 26/04/2022 Nom: Isabelle Rioux Description: Modification du bouton de bannissement
+Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
+...
+=========================================================
+****************************************/-->
+
+{% set win = 0 %}
+{% set time = date('0000-01-01 0:0:0') %}
+{% for partie in user.parties %}
+    {% if partie.win == true %}
+        {% set win = win + 1 %}
+    {% endif %}
+    {% set temp = date(partie.temps)%}
+    {% set time = time|date_modify("+" ~ temp|date("H\\h\\o\\u\\r +i\\m\\i\\n +s\\s\\e\\c")) %}
+{% endfor %}
+
+<main>
+<h1 class="profileTitle">{{user.username}}</h1>
+<section class="userProfile">
+<div class="avatarBox">
+    <img src="{{ user.avatar|e('html_attr') }}" alt="Cet utilisateur n'a pas d'avatar." width="200" height="200"/>
+</div>
+<div class="stat flexStats">
+    <span>Nombre de parties jouées: {{user.parties|length}}</span><br>
+    <span>Nombre de parties gagnées: {{win}}</span><br>
+    <span>Temps de jeu: {{time|date("Y:")}}{{(time|date("m"))-1}}:{{(time|date("d"))-1}}{{time|date(":H:i:s")}}</span><br>
+    <span>Date de création du compte: {{user.dateCreation|date("d/m/Y")}}</span><br>
+    <span>État du compte: {{user.idStatut.statut}}</span><br>
+    <button class="banBtn" type="button" onclick="window.location.href='/user/{{user.id}}/ban'">Ban/Unban</button>
+</div>
+</section>
+</main>
+{% endblock %}

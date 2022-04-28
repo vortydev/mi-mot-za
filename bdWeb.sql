@@ -71,7 +71,7 @@ CREATE TABLE `tbl_thread` (
   `id` int(8) NOT NULL AUTO_INCREMENT,
   `idUser` int(8) NOT NULL,
   `titre` varchar(255) NOT NULL,
-  `idMessage` int(8) NOT NULL, 
+  `idMessage` int(8) NOT NULL, -- si table message mess up essayer ajouter nullable
   `dateEmission` DATETIME NOT NULL,
 
   CONSTRAINT PK_Thread PRIMARY KEY (`id`),

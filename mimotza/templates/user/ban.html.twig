@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {% if user.idRole.role == "Administrateur" %}
+        Action refusée
+    {% elseif user.idStatut.id == 3 %}
+        {{user.username}} de nouveau autorisé
+    {% elseif user.idStatut.id == 1 or user.idStatut.id == 2 %}
+        {{user.username}} banni
+    {% endif %}
+{% endblock %}
+{% block body %}
+<!-- /****************************************
+Fichier : ban.html.twig
+Auteurs : Isabelle Rioux, Étienne Ménard
+Fonctionnalité : Template d'affichage du bannissement
+Date : 26/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+Date: 26/04/2022 Nom: Isabelle Rioux Description: affichage si un joueur est banni
+Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
+Date: 27/04/2022 Nom: Isabelle Rioux Description: fusion de ban, unban et bandenied
+...
+=========================================================
+****************************************/-->
+
+<main>
+{% if user.idRole.role == "Administrateur" %}
+    <h1>{{user.username}} est un administrateur. Il/elle ne peut être banni</h1>
+{% elseif user.idStatut.id == 3 %}
+    <h1>{{user.username}} n'est plus banni</h1>
+{% elseif user.idStatut.id == 1 or user.idStatut.id == 2 %}
+    <h1>{{user.username}} a été banni</h1>
+{% endif %}
+</main>
+{% endblock %}
