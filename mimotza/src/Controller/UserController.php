@@ -14,6 +14,7 @@ Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement de l'affichage d'un
 Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur et du bannissement
 Date: 26/04/2022 Nom: Étienne Ménard Description: Insertion d'utilisateurs dans la BD à partir d'un tableau JSON
 Date: 27/04/2022 Nom: Isabelle Rioux Description: Simplification de l'affichage de ban/unban et bandenied et empecher un admin d'etre banni
+Date: 28/04/2022 Nom: Isabelle Rioux Description: Pagination de la liste de joueurs
 Date: 28/04/2022 Nom: François-Nicolas Gitzhofer Description: Ajout de l'inscription d'utilisateur via fichier JSON
 ...
 =========================================================
@@ -41,16 +42,18 @@ use App\Repository\StatutRepository;
 use App\Entity\Utilisateur;
 use App\Repository\UtilisateurRepository;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 class UserController extends AbstractController
 {
-    #[Route('/user', name: 'user')]
-    public function index(ManagerRegistry $regis): Response
+    #[Route('/users/{page}', name: 'user')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
+    public function index(ManagerRegistry $regis,$page=1): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         $formRecherche=$this->createFormBuilder()
         ->setAction($this->generateUrl('result'))
@@ -77,7 +80,19 @@ class UserController extends AbstractController
         ->getForm();
 
         $userRepository = $regis->getRepository(Utilisateur::class);
-        $users = $userRepository->findAll();
+
+        $query = $userRepository->createQueryBuilder('user')->getQuery();
+
+        $paginator = new Paginator($query);
+
+        $totalItems = count($paginator);
+        $pagesCount = ceil($totalItems / 20);
+
+        $paginator
+            ->getQuery()
+            ->setFirstResult(20 * ($page-1))
+            ->setMaxResults(20);
+
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
             'list_users' => $users,
@@ -87,13 +102,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/{id}', name: 'particular_user')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function showUser(ManagerRegistry $regis, $id): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
@@ -113,13 +126,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/resultuser', name: 'result')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function showResearchResult(ManagerRegistry $regis): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         $request = Request::createFromGlobals();
         $username = $request->get('form');
@@ -139,6 +150,7 @@ class UserController extends AbstractController
             ]);
         }
     }
+
     #[Route('/inscription', name: 'inscription')]
     public function inscription(ManagerRegistry $doctrine): Response {
         $formInscription = $this->createFormBuilder()
@@ -162,15 +174,14 @@ class UserController extends AbstractController
                 'form' => $formInscription->createView()
             ]);
     }
+
     #[Route('/user/{id}/ban', name: 'ban')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function banUser(ManagerRegistry $regis, $id): Response 
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
-        
+
         $em = $regis->getManager();
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);

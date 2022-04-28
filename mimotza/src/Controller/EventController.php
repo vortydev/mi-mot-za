@@ -39,11 +39,17 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\Validator\Constraints\DateTime;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 class EventController extends AbstractController
 {
     #[Route('/event', name: 'app_event')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function event(Request $request, ManagerRegistry $doctrine): Response
     {
+
         $code = 200;
         $error = null;
 
@@ -115,7 +121,10 @@ class EventController extends AbstractController
     // Le deuxième paramètre est l'id du type d'événement
     // Le troisième paramètre est où la page doit
     #[Route('/redirect/{userId}/{eventType}/{whereTo}', name: 'app_eventRedirect')]
-    public function eventRedirect(ManagerRegistry $doctrine, Request $request, int $userId, int $eventType, string $whereTo): Response {
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
+    public function eventRedirect(ManagerRegistry $doctrine, int $userId, int $eventType, string $whereTo): Response {
 
         if (isset($userId)) {
 
