@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{mot}}{% endblock %}
+
+{% block body %}
+<!-- /****************************************
+Fichier : user.html.twig
+Auteurs : Isabelle Rioux, Étienne Ménard
+Fonctionnalité : Template d'affichage d'un seul utilisateur
+Date : 21/04/2022
+Vérification :
+Date Nom Approuvé
+=========================================================
+Historique de modifications :
+Date: 21/04/2022 Nom: Isabelle Rioux Description: Gestion des variables de statistiques
+Date: 22/04/2022 Nom: Isabelle Rioux Description: Correction de l'affichage du temps de jeu
+Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement avec la base de données
+Date: 26/04/2022 Nom: Isabelle Rioux Description: Modification du bouton de bannissement
+Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
+...
+=========================================================
+****************************************/-->
+
+
+<main>
+<h1>{{ mot }}</h1>
+<button type="button" onclick="window.location.href='/'">Supprimer</button>
+<div class="stat">
+    <span>Nombre de fois que le mot a été joué: {{ nbFoisJoue }}</span><br>
+    <span>Nombre de parties reussi avec ce mot : {{ partiesGagnesMot }}</span><br>
+    <span>Temps moyen pour trouver ce mot:{{ tempMoyen }} </span><br>
+    <span>Nombre de tentatives moyen pour trouver ce mot: {{ tentativesMoyen }}</span><br>
+</div>
+
+</main>
+{% endblock %}

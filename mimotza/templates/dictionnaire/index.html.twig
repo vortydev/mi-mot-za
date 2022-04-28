@@ -24,22 +24,26 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
         </script>
     {% endif %}
     
-    <h1>Gestionnaire des mots</h1>
-
+    <h1 class="wordTitle">Gestionnaire des mots</h1>
+    <section class="wordAdd">
     {% for message in app.flashes('action') %}
         <h2>{{ message }}</h2>
     {% endfor %}
     {{ form(form) }}
+    </section>
 
+    <section class="wordDic">
     <h4> Mots dans le dictionnaire: </h4>
     <ul>
         {% for element in listMots %}
-        <li> {{element.mot}}
-        <button type="button" class="btn btn-primary" onclick="window.location.href='/GestionDuJeu/{{element.id}}'">Statistiques</button>
-        </li>
+        <div class="wordDicDiv">
+            <li class="wordDicWord">{{element.mot}}<button type="button" class="btn btn-primary wordStatBtn" onclick="window.location.href='/GestionDuJeu/{{element.id}}'">Statistiques</button></li>
+        </div>
         {% endfor %}
     </ul>
+    </section>
 
+    <section class="wordProp">
     <h4> Mots proposés: </h4>
     {% if app.flashes('delete') %}
         <script>
@@ -57,12 +61,11 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
             </li>
         {% endfor %}
     </ul>
+    </section>
 </main>
         
-
-    
-    <script>
-       // sendEvent(,7, "Ajout d'un mot ");
-    </script>
+<script>
+    // sendEvent(,7, "Ajout d'un mot ");
+</script>
 {% endblock %}
 
