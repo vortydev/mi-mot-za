@@ -20,9 +20,16 @@ class AjouterMotType extends AbstractType
         
        
         $builder
+            ->add('idLangue', EntityType::class, [
+                'class' => Langue::class,
+                'choice_label' => 'Langue',
+                'label' => ' ',
+                'multiple' => False,
+                'required' => True
+            ])
             ->add('mot', TextType::class,[
                 'attr' => ['pattern'=> '[A-Za-z]{5}'],
-                'label' => ' Mot :',
+                'label' => ' ',
                 'required'=> true
             ])
             ->add('dateAjout', HiddenType::class, [
@@ -30,16 +37,6 @@ class AjouterMotType extends AbstractType
                 'label' => ' ',
                 'required' => False
             ])
-            ->add('idLangue', EntityType::class, [
-                'class' => Langue::class,
-                'choice_label' => 'Langue',
-                'label' => 'Langue : ',
-                'multiple' => False,
-                'required' => True
-                
-            ]
-            )
-            
             ->add('Ajouter', SubmitType::class,[
                 'label' => 'Ajouter'
             ])
