@@ -22,37 +22,87 @@ class MessageController extends AbstractController
         //->setAction($this->generateUrl('app_message'))
         //$em = $doctrine->getManager();
         $listeMessages = $doctrine->getRepository(Message::class)->findALL();
+        $listeThreads = $doctrine->getRepository(Thread::class)->findALL();
         return $this->render('message/index.html.twig', [
             'controller_name' => 'MessageController',
-            'listeMessages' => $listeMessages
+            'listeMessages' => $listeMessages,
+            'listeThread' =>$listeThreads
         ]);
     }
 
-    #[Route('/message/utilisateur/{numero}', name: 'joueur_message')]
-    public function messageUtilisateur(ManagerRegistry $doctrine, Request $request,$numero): Response
+    #[Route('/message/utilisateur/{idUser}', name: 'joueur_message')]
+    public function messageUtilisateur(ManagerRegistry $doctrine, Request $request,$idUser): Response
     {
         $em = $doctrine->getManager();
-        $listeMessages = $doctrine->getRepository(Message::class)->findBy(array('idUser' => $numero));
+        $listeMessages = $doctrine->getRepository(Message::class)->findBy(array('idUser' => $idUser));
+        $listeThread = $doctrine->getRepository(Thread::class)->findBy(array('idUser' => $idUser));
         return $this->render('message/index.html.twig', [
             'controller_name' => 'MessageController',
-            'listeMessages' => $listeMessages
+            'listeMessages' => $listeMessages,
+            'listeThread' =>$listeThreads
+
         ]);
     }
 
-    #[Route('/message/ajoutMessage', name: 'ajout_message')]
-    public function ajoutMessage(ManagerRegistry $doctrine, Request $request): Response
+    
+    //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
+    // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
+    #[Route('/ajoutMedia', name: 'ajoutMedia')]
+    public function ajoutMedia(ManagerRegistry $doctrine, Request $request )
     {
-        if ($request->isMethod('post')) {
-            if($post['action'] != 'thread'){
-                $post = $request->request->all();
-                $em = $doctrine->getManager();
-                $message = new Message;
-                $listeMessages = $doctrine->getRepository(Message::class)->findALL();
+        if($request->isMethod('post')){
+            $em=$doctrine->getManager();
+            $post = $request->request->all();
+            $message = new Message;
+
+            $utilisateur =$doctrine->getRepository(Utilisateur::class)->find($post['idUser']);
+
+            $message->setIdUser($utilisateur);
+            $message->setDateEmission(new \DateTime('now'));
+            $message->setContenu($post['contenu']);
+            if(isset($post['idMessageParent'])){
+                $messageParent = $doctrine->getRepository(Message::class)->find($post['idMessageParent']);
+                $message->setIdParent($messageParent);
             }
-            return $this->render('message/reponse.html.twig', [
-                'controller_name' => 'MessageController',
-                'post' => $post
-            ]);
+            $em->persist($message);
+            $em->flush();
+
+            if(isset($post['thread']) && !(isset($post['idMessageParent']))){
+                $thread = new Thread;
+                $thread->setIdUser($utilisateur);
+                $thread->setIdMessage($message);
+                $thread->setDateEmission(new \DateTime('now'));
+                $thread->setTitre($post['titre']);
+                $em->persist($thread);
+                $em->flush();
+            }
         }
+
+    }
+
+
+    //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
+    // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
+    #[Route('/supprimerMedia', name: 'supprimerMedia')]
+    public function supprimerMedia(ManagerRegistry $doctrine, Request $request )
+    {
+        if($request->isMethod('post')){
+            $em=$doctrine->getManager();
+            $post = $request->request->all();
+            $message = new Message;
+            if ($post['supprimer'] == 'Thread'){
+                $thread = $doctrine->getRepository(Thread::class)->find($post['idThread']);
+                $thread->setTitre('Ce contenu a été par l\'Utilisateur');
+                $message =$thread->getIdMessage();
+                $message->setContenu('Ce contenu a été par l\'Utilisateur');
+            }
+            if ($post['supprimer'] == 'Message'){
+                $message =$doctrine->getRepository(Message::class)->find($post['idMessage']);
+                $message->setContenu('Ce contenu a été par l\'Utilisateur');
+            }
+            $em->persist($message);
+            $em->flush();
+        }
+
     }
 }
