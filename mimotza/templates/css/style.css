@@ -51,6 +51,7 @@ h1, h2, h3, h4, h5 {
 
 h1 {
     margin-top: 25px;
+    text-align: center;
 }
 
 a, button, select {
@@ -58,7 +59,7 @@ a, button, select {
     transition: all 0.2s;
 }
 
-a {
+a, em {
     color: var(--bleu);
     text-decoration: none;
 }
@@ -210,7 +211,7 @@ footer {
 }
 
 /* CONNEXION */
-.loginTitle, .userTitle, .logTitle, .wordTitle {
+.loginTitle, .userTitle, .logTitle, .wordTitle, .profileTitle {
     text-align: center;
     margin-bottom: 20px;
 }
@@ -338,6 +339,41 @@ footer {
 
 .userLink {
     width: 30%;
+}
+
+/* PROFILE */
+.userProfile {
+    width: 100%;
+    margin: auto;
+}
+
+.avatarBox {
+    width: fit-content;
+    border: var(--bleu) 2px solid;
+    border-radius: 4px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.flexStats {
+    text-align: center;
+    width: 50%;
+    margin: auto;
+    flex-direction: row;
+    background-color: var(--gris);
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.flexStats > span {
+    display: inline;
+    width: 100%;
+}
+
+.banBtn {
+    display: inline-block;
+    margin-top: 20px !important;
+    margin: auto;
 }
 
 /* WORD */
