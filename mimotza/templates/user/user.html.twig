@@ -33,7 +33,7 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
 
 <main>
 <h1>Profil de {{user.username}}</h1>
-<img src="{{user.avatar}}" alt="Il n'y a pas d'avatar pour ce joueur" width="500" height="600"/><br>
+<img src="{{ user.avatar|e('html_attr') }}" alt="Il n'y a pas d'avatar pour ce joueur" width="150" height="150"/><br>
 <div class="stat">
     <span>Nombre de parties jouées: {{user.parties|length}}</span><br>
     <span>Nombre de parties gagnées: {{win}}</span><br>
