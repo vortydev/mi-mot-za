@@ -37,14 +37,13 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
     </section>
 
     <h2 class="wordDicSubtitle">Mots dans le dictionnaire</h2>
-    <section class="wordDic">
-    <ul>
-        {% for element in listMots %}
-        <div class="wordDicDiv">
-            <li class="wordDicWord">{{element.mot}}<button type="button" class="btn btn-primary wordStatBtn" onclick="window.location.href='/GestionDuJeu/{{element.id}}'">Statistiques</button></li>
+    <section class="flexWordDic">
+    {% for element in listMots %}
+        <div class="flexWord">
+            <p>{{element.mot}}</p>
+            <a href="/GestionDuJeu/{{element.id}}">Statistiques</a>
         </div>
         {% endfor %}
-    </ul>
     </section>
 
     <section class="wordProp">

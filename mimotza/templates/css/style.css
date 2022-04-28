@@ -9,6 +9,7 @@ Date Nom Approuvé
 Historique de modifications :
 Date: 26/04/2022 Nom: Étienne Ménard Description: Création du fichier et layout de base
 Date: 27/04/2022 Nom: Étienne Ménard Description: Altération des éléments et de leur espacement
+Date: 28/04/2022 Nom: Étienne Ménard Description: CSS pour les mots, les messages et les profils d'utilisateurs
 ...
 =========================================================
 ****************************************/-->
@@ -345,6 +346,7 @@ footer {
     text-align: center;
 }
 
+/* WORD ADD FORM */
 .wordAddForm {
     width: 40%;
     margin: auto;
@@ -398,16 +400,45 @@ footer {
     display: inline-block;
 }
 
-.wordDic {
+/* WORD DICTIONNARY */
+.flexWordDic {
     width: 70%;
-    flex-direction: column;
     margin: auto;
     background-color: var(--gris);
     border-radius: 4px;
     padding: 20px;
+    padding-bottom: 10px;
+    flex-direction: row;
 }
 
-.wordProp {
+.flexWord {
+    flex-direction: row;
+    width: 48%;
+    margin: auto;
+    border-radius: 4px;
+    border: var(--bleu) 2px solid;
+    padding: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.flexWord:hover {
+    background-color: var(--grisa);
+}
+
+.flexWord:nth-child(odd) {
+    margin-right: 5px;
+}
+
+.flexWord:nth-child(even) {
+    margin-left: 5px;
+}
+
+.flexWord * {
+    width: 50%;
+}
+
+/* .wordProp {
     width: 70%;
     flex-direction: column;
     margin: auto;
@@ -415,22 +446,4 @@ footer {
     background-color: var(--gris);
     border-radius: 4px;
     padding: 20px;
-}
-
-.wordDicDiv {
-    width: 100%;
-    border-radius: 4px;
-    border: var(--bleu) 2px solid;
-    padding: 10px;
-    margin-bottom: 5px;
-}
-
-.wordDicWord {
-    margin-right: auto;
-}
-
-.wordStatBtn {
-    width: 30%;
-    text-align: center;
-    
-}
+} */
