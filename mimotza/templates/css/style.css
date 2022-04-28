@@ -543,3 +543,8 @@ footer {
 .motProfile {
     width: 60%;
 }
+
+.messageBox {
+    display: flex;
+    flex-direction: column-reverse;
+}
