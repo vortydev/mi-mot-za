@@ -358,4 +358,9 @@ class UserController extends AbstractController
             ]);
         }
     }
+
+    #[Route('/adduserfile', name: 'adduserfile')]
+    public function addUserFile(Request $request, ManagerRegistry $doctrine): Response {
+        return $this->render('user/index.html.twig');
+    }
 }
