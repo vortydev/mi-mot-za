@@ -67,12 +67,12 @@ class UserController extends AbstractController
         $paginator = new Paginator($query);
 
         $totalItems = count($paginator);
-        $pagesCount = ceil($totalItems / 100);
+        $pagesCount = ceil($totalItems / 20);
 
         $paginator
             ->getQuery()
-            ->setFirstResult(100 * ($page-1))
-            ->setMaxResults(100);
+            ->setFirstResult(20 * ($page-1))
+            ->setMaxResults(20);
 
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
