@@ -189,7 +189,7 @@ button:hover {
     background-color: var(--bleua);
 }
 
-form, input {
+form, input, select {
     border-radius: 4px;
     border: none;
 }
@@ -254,7 +254,7 @@ footer {
 
 .logBox ul {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
 }
 
 .logBox li {
@@ -322,6 +322,10 @@ footer {
     margin-bottom: 5px;
 }
 
+.flexUser:hover {
+    background-color: var(--grisa);
+}
+
 .userName {
     margin-right: auto;
 }
@@ -336,42 +340,62 @@ footer {
 }
 
 /* WORD */
+.wordAddSubtitle, .wordDicSubtitle {
+    margin-bottom: 10px;
+    text-align: center;
+}
 
-.wordAdd {
-    width: 60%;
+.wordAddForm {
+    width: 40%;
     margin: auto;
     flex-direction: row;
     margin-bottom: 20px;
     text-align: center;
+    background-color: var(--gris);
+    padding: 15px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-radius: 4px;
 }
 
-.wordAdd > form {
+.wordAddForm > form {
     width: 100%;
 }
 
-.wordAdd > form > div {
+.wordAddForm > form > div {
+    width: 100%;
+    text-align: center;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    flex-direction: row;
 }
 
-.wordAdd div > div {
+.wordAddForm div > div{
+    width: 50%;
+}
+
+.wordAddForm div > div:first-child {
     width: 100%;
+    margin-bottom: 10px;
 }
 
-.wordAdd div > input {
+.wordAddForm div:nth-child(2) {
+    padding-top: 5px;
+    padding-right: 10px;
+}
+
+.wordAddForm input {
     width: 100%;
     margin: auto;
     margin-top: auto;
     margin-bottom: auto;
+    text-align: center;
+    text-transform: uppercase;
 }
 
-.wordAdd div > div:first-of-type {
-    padding-top: 2.5px;
-    padding-right: 10px;
-}
-
-.wordAdd div > button {
-    width: 200px;
+.wordAddForm div > button {
+    width: 130px;
+    display: inline-block;
 }
 
 .wordDic {
