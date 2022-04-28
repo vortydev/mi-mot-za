@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello EventController!{% endblock %}
+
+{% block body %}
+<main>
+<h1>Chargement...</h1>
+{% if eventType is defined %}
+<script>
+
+    function redirectTo(whereTo) {
+        window.location.href = 'http://localhost:8000' + whereTo;
+    }
+
+
+    userId = {{app.user.getId()}};
+
+    eventType = {{eventType}};
+
+    message = "";
+
+    switch (eventType) {
+
+        case 2:
+            message = "L'utilisateur {{app.user.getUsername()}} s'est connecté le [date]";
+            break;
+        case 3:
+            message = "L'utilisateur {{app.user.getUsername()}} s'est déconnecté le [date]";
+            break;
+    }
+
+    sendEvent(userId, {{eventType}}, message);
+
+    const myTimeout = setTimeout(function() {
+        redirectTo("{{whereTo}}");
+    }, 5000);
+</script>
+{% else %}
+
+<ul>
+    <li>
+        User id: {{userId}}
+    </li>
+    <li>
+        Event type: {{typeEvent}}
+    </li>
+</ul>
+
+{% endif %}
+
+</main>
+
+{% endblock %}
