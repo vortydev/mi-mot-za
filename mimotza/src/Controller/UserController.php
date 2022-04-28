@@ -14,6 +14,7 @@ Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement de l'affichage d'un
 Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur et du bannissement
 Date: 26/04/2022 Nom: Étienne Ménard Description: Insertion d'utilisateurs dans la BD à partir d'un tableau JSON
 Date: 27/04/2022 Nom: Isabelle Rioux Description: Simplification de l'affichage de ban/unban et bandenied et empecher un admin d'etre banni
+Date: 28/04/2022 Nom: Isabelle Rioux Description: Pagination de la liste de joueurs
 ...
 =========================================================
 ****************************************/
@@ -41,13 +42,15 @@ use App\Repository\UtilisateurRepository;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 class UserController extends AbstractController
 {
-    #[Route('/user', name: 'user')]
+    #[Route('/users/{page}', name: 'user')]
     /**
     *  @Security("is_granted('ROLE_ADMIN')")
     */
-    public function index(ManagerRegistry $regis): Response
+    public function index(ManagerRegistry $regis,$page=1): Response
     {
 
         $form=$this->createFormBuilder()
@@ -59,10 +62,25 @@ class UserController extends AbstractController
         
         $userRepository = $regis->getRepository(Utilisateur::class);
         $users = $userRepository->findAll();
+
+        $query = $userRepository->createQueryBuilder('user')->getQuery();
+
+        $paginator = new Paginator($query);
+
+        $totalItems = count($paginator);
+        $pagesCount = ceil($totalItems / 100);
+
+        $paginator
+            ->getQuery()
+            ->setFirstResult(100 * ($page-1))
+            ->setMaxResults(100);
+
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
-            'list_users' => $users,
-            'form_user'=>$form->createView()
+            'list_users' => $paginator,
+            'form_user'=>$form->createView(),
+            'page'=>$page,
+            'nbPage'=>$pagesCount
         ]);
     }
 
