@@ -38,10 +38,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class DictionnaireController extends AbstractController
 {
-
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     //Accueil du gestion de mot qui affiche les mots et les suggestion des mts
     #[Route('/GestionDuJeu', name: 'accueil_gestionDuJeu')]
     /**
