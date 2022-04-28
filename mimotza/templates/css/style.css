@@ -9,6 +9,7 @@ Date Nom Approuvé
 Historique de modifications :
 Date: 26/04/2022 Nom: Étienne Ménard Description: Création du fichier et layout de base
 Date: 27/04/2022 Nom: Étienne Ménard Description: Altération des éléments et de leur espacement
+Date: 28/04/2022 Nom: Étienne Ménard Description: CSS pour les mots, les messages et les profils d'utilisateurs
 ...
 =========================================================
 ****************************************/-->
@@ -340,11 +341,12 @@ footer {
 }
 
 /* WORD */
-.wordAddSubtitle, .wordDicSubtitle {
+.wordAddSubtitle, .wordDicSubtitle, .wordPropSubtitle {
     margin-bottom: 10px;
     text-align: center;
 }
 
+/* WORD ADD FORM */
 .wordAddForm {
     width: 40%;
     margin: auto;
@@ -398,39 +400,75 @@ footer {
     display: inline-block;
 }
 
-.wordDic {
+/* WORD DICTIONNARY */
+.flexWordDic {
     width: 70%;
-    flex-direction: column;
     margin: auto;
+    margin-bottom: 20px;
     background-color: var(--gris);
     border-radius: 4px;
     padding: 20px;
+    padding-bottom: 10px;
+    flex-direction: row;
 }
 
-.wordProp {
-    width: 70%;
-    flex-direction: column;
+.flexWord  {
+    flex-direction: row;
+    width: 48%;
     margin: auto;
-    margin-top: 20px;
-    background-color: var(--gris);
-    border-radius: 4px;
-    padding: 20px;
-}
-
-.wordDicDiv {
-    width: 100%;
     border-radius: 4px;
     border: var(--bleu) 2px solid;
-    padding: 10px;
-    margin-bottom: 5px;
-}
-
-.wordDicWord {
-    margin-right: auto;
-}
-
-.wordStatBtn {
-    width: 30%;
+    padding: 5px;
+    margin-bottom: 10px;
     text-align: center;
-    
+}
+
+.flexWord:hover, .flexWordSugg:hover {
+    background-color: var(--grisa);
+}
+
+.flexWord:nth-child(odd) {
+    margin-right: 5px;
+}
+
+.flexWord:nth-child(even) {
+    margin-left: 5px;
+}
+
+.flexWord > p, .flexWord > a {
+    width: 50%;
+}
+
+/* WORD SUGGESTIONS */
+.flexWordProp {
+    width: 60%;
+    margin: auto;
+    margin-bottom: 20px;
+    background-color: var(--gris);
+    border-radius: 4px;
+    padding: 20px;
+    padding-bottom: 10px;
+    flex-direction:  column;
+}
+
+.flexWordSugg {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: var(--bleu) 2px solid;
+}
+
+.flexWordSugg > p {
+    padding-top: 5px;
+    width: 45%;
+}
+
+.flexSuggBtn {
+    width: 55%;
+}
+
+.flexSuggBtn > button {
+    display: inline-block;
 }
