@@ -126,7 +126,9 @@ class EventController extends AbstractController
 
             switch ($eventType) {
 
-                case 2:
+                case 1:         // Inscription Utilisateur
+                    break;
+                case 2:         // Activation Utilisateur
                     if (isset($user) && $user->getIdStatut()->getId() != 2) {
                         
                         $statutRepos = $entityManager->getRepository(Statut::class);                        
@@ -142,11 +144,11 @@ class EventController extends AbstractController
                         ]);
                     }
                     break;
-                case 3:
+                case 3:         // Désactivation Utilisateur
                     if (isset($user) && $user->getIdStatut()->getId() == 2) {
 
                         $statutRepos = $entityManager->getRepository(Statut::class);
-                        $statut = $statutRepos->findOneBy(['id' => 3]);
+                        $statut = $statutRepos->findOneBy(['id' => 1]);
 
                         $user->setIdStatut($statut);
 
@@ -157,6 +159,28 @@ class EventController extends AbstractController
                             'whereTo' => $whereTo
                         ]);
                     }
+                    break;
+                case 4:         // Banissement Utilisateur
+                    break;
+                case 5:         // Ajout Thread
+                    break;
+                case 6:         // Suppression Thread
+                    break;
+                case 7:         // Ajout Message
+                    break;
+                case 8:         // Suppression Message
+                    break;
+                case 9:         // Partie
+                    break;
+                case 10:        // Ajout Langue
+                    break;
+                case 11:        // Suppression Langue
+                    break;
+                case 12:        // Ajout Mot
+                    break;
+                case 13:        // Suppression Mot
+                    break;
+                case 14:        // Suggestion Mot
                     break;
             }
         }
