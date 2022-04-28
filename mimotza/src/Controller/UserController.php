@@ -285,7 +285,7 @@ class UserController extends AbstractController
                         ->setNom($u['nom'])
                         ->setEmail($u['email'])
                         ->setUsername($u['username'])
-                        ->setMdp($u['mdp'])//->setMdp(password_hash($u['mdp'], PASSWORD_DEFAULT))
+                        ->setMdp(password_hash($u['mdp'], PASSWORD_DEFAULT))
                         ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
     
                         // set role
