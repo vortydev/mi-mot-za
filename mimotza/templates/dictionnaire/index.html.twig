@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gestion du jeu{% endblock %}
+{% block title %}Mots{% endblock %}
 
 {% block body %}
 <!-- /****************************************
@@ -20,20 +20,24 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
 <main>
     {% if app.flashes('action') %}
         <script>
-            sendEvent(1, 1, "test");
+            {# sendEvent(1, 1, "test"); #}
         </script>
     {% endif %}
     
     <h1 class="wordTitle">Gestionnaire des mots</h1>
-    <section class="wordAdd">
-    {% for message in app.flashes('action') %}
-        <h2>{{ message }}</h2>
-    {% endfor %}
-    {{ form(form) }}
+    
+    <h2 class="wordAddSubtitle">Ajout de mots</h2>
+    <section class="wordAddForm">
+        
+        {% for message in app.flashes('action') %}
+            <h3>{{ message }}</h3>
+        {% endfor %}
+        
+        {{ form(form) }}
     </section>
 
+    <h2 class="wordDicSubtitle">Mots dans le dictionnaire</h2>
     <section class="wordDic">
-    <h4> Mots dans le dictionnaire: </h4>
     <ul>
         {% for element in listMots %}
         <div class="wordDicDiv">
