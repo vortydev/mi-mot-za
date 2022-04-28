@@ -113,17 +113,33 @@ class MessageController extends AbstractController
                 $messageParent = $doctrine->getRepository(Message::class)->find($post['idMessageParent']);
                 $message->setIdParent($messageParent);
             }
-            $em->persist($message);
-            $em->flush();
+           
+            try {
+                $em->persist($message);
+                $em->flush();
+            } catch(Exception $e) {
+                $response = new Response();
+                $response->setStatusCode(400);
+                return $response;
+            }
 
             if(isset($post['thread']) && !(isset($post['idMessageParent']))){
-                $thread = new Thread;
-                $thread->setIdUser($utilisateur);
-                $thread->setIdMessage($message);
-                $thread->setDateEmission(new \DateTime('now'));
-                $thread->setTitre($post['titre']);
-                $em->persist($thread);
-                $em->flush();
+               
+                
+                try {
+                    $thread = new Thread;
+                    $thread->setIdUser($utilisateur);
+                    $thread->setIdMessage($message);
+                    $thread->setDateEmission(new \DateTime('now'));
+                    $thread->setTitre($post['titre']);
+                    $em->persist($thread);
+                    $em->flush();
+                } catch(Exception $e) {
+                    $response = new Response();
+                    $response->setStatusCode(400);
+                    return $response;
+                }
+                
             }
             $response = new Response();
             $response->setStatusCode(200);
@@ -139,25 +155,35 @@ class MessageController extends AbstractController
     public function supprimerMedia(ManagerRegistry $doctrine, Request $request )
     {
         if($request->isMethod('post')){
-            $em=$doctrine->getManager();
-            $post = $request->request->all();
-            $message = new Message;
-            if ($post['supprimer'] == 'Thread'){
-                $thread = $doctrine->getRepository(Thread::class)->find($post['idThread']);
-                $thread->setTitre('Ce contenu a été par l\'Utilisateur');
-                $message =$thread->getIdMessage();
-                $message->setContenu('Ce contenu a été par l\'Utilisateur');
+            
+            
+            try {
+                $em=$doctrine->getManager();
+                $post = $request->request->all();
+                $message = new Message;
+                if ($post['supprimer'] == 'Thread'){
+                    $thread = $doctrine->getRepository(Thread::class)->find($post['idThread']);
+                    $thread->setTitre('Ce contenu a été par l\'Utilisateur');
+                    $message =$thread->getIdMessage();
+                    $message->setContenu('Ce contenu a été par l\'Utilisateur');
+                }
+                if ($post['supprimer'] == 'Message'){
+                    $message =$doctrine->getRepository(Message::class)->find($post['idMessage']);
+                    $message->setContenu('Ce contenu a été par l\'Utilisateur');
+                }
+                    $em->persist($message);
+                    $em->flush();
+            } catch(Exception $e) {
+                $response = new Response();
+                $response->setStatusCode(400);
+                return $response;
             }
-            if ($post['supprimer'] == 'Message'){
-                $message =$doctrine->getRepository(Message::class)->find($post['idMessage']);
-                $message->setContenu('Ce contenu a été par l\'Utilisateur');
-            }
-            $em->persist($message);
-            $em->flush();
+
             $response = new Response();
             $response->setStatusCode(200);
             return $response;
         }
 
     }
+
 }
