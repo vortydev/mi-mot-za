@@ -121,9 +121,6 @@ class EventController extends AbstractController
     // Le deuxième paramètre est l'id du type d'événement
     // Le troisième paramètre est où la page doit
     #[Route('/redirect/{userId}/{eventType}/{whereTo}', name: 'app_eventRedirect')]
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     public function eventRedirect(ManagerRegistry $doctrine, int $userId, int $eventType, string $whereTo): Response {
 
         if (isset($userId)) {
