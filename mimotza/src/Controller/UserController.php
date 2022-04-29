@@ -52,7 +52,7 @@ class UserController extends AbstractController
     /**
     *  @Security("is_granted('ROLE_ADMIN')")
     */
-    public function index(ManagerRegistry $regis,$page=1): Response
+    public function index(ManagerRegistry $regis, $page=1): Response
     {
 
         $formRecherche=$this->createFormBuilder()
