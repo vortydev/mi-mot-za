@@ -36,8 +36,6 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Form\AjouterMotType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-
 class DictionnaireController extends AbstractController
 {
 

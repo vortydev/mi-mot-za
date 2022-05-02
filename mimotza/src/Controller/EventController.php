@@ -148,7 +148,7 @@ class EventController extends AbstractController
                 case 2:         // Activation Utilisateur
                     if (isset($user) && $user->getIdStatut()->getId() != 2) {
                         
-                        $statutRepos = $entityManager->getRepository(Statut::class);                        
+                        $statutRepos = $entityManager->getRepository(Statut::class);
                         $statut = $statutRepos->findOneBy(['id' => 2]);
 
                         $user->setIdStatut($statut);
