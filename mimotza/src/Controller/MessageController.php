@@ -226,14 +226,15 @@ class MessageController extends AbstractController
                 foreach ($threads as $thread) {
 
                     $message = $thread->getIdMessage();
-                    $json['Thread' . $thread->getId()] = array();
-                    $json['Thread' . $thread->getId()]['IDThread'] = $thread->getId();
-                    $json['Thread' . $thread->getId()]['Titre'] = $thread->getTitre();
-                    $json['Thread' . $thread->getId()]['Auteur'] = $thread->getIdUser()->getUsername();
-                    $json['Thread' . $thread->getId()]['IDMessage'] = $message->getId();
-                    $json['Thread' . $thread->getId()]['Message'] = $message->getContenu();
-                    $json['Thread' . $thread->getId()]['NbReponses'] = count($message->getMessages());
+                    $json[$thread->getId()] = array();
+                    $json[$thread->getId()]['ID'] = $thread->getId();
+                    $json[$thread->getId()]['Titre'] = $thread->getTitre();
+                    $json[$thread->getId()]['Auteur'] = $thread->getIdUser()->getUsername();
+                    $json[$thread->getId()]['Message'] = $message->getContenu();
+                    $json[$thread->getId()]['NbReponses'] = count($message->getMessages());
                 }
+
+                $json['ServerIP'] = gethostbyname(gethostname());
 
                 $jsonText = json_encode($json);
             } catch(Exception $e) {
