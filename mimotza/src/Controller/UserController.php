@@ -216,6 +216,46 @@ class UserController extends AbstractController
         }
     }
 
+    #[Route('/adduserAPI', name: 'adduserAPI')]
+    public function addUserAPI(Request $request, ManagerRegistry $doctrine): Response {
+
+        if($request->isMethod('post')){
+            $post = $request->request->all();
+            $entityManager = $doctrine->getManager();
+            $roleManager = $entityManager->getRepository(Role::class);
+            $statutManager = $entityManager->getRepository(Statut::class);
+            $userManager = $entityManager->getRepository(Utilisateur::class);
+            $roleUsager = $roleManager->findOneBy(['role' => 'Usager']);
+            $statutInactif = $statutManager->findOneBy(['id' => 1]);
+
+            $emailCheck = $userManager->findOneBy(['email' => $post['email']]);
+            $usernameCheck = $userManager->findOneBy(['username' => $post['username']]);
+
+            if ($emailCheck == null && $usernameCheck == null) {
+                $user = new Utilisateur();
+                    // load user data
+                $user->setPrenom($post['prenom'])
+                ->setNom($post['nom'])
+                ->setEmail($post['email'])
+                ->setUsername($post['username'])
+                ->setMdp(password_hash($post['mdp'], PASSWORD_DEFAULT))
+                ->setIdRole($roleUsager)
+                ->setIdStatut($statutInactif)
+                ->setAvatar(null)
+                ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                $response = new Response();
+                $response->setStatusCode(200);
+            } else {
+                $response->setStatusCode(500);
+            }
+            return $response;
+
+        }
+    }
+
     #[Route('/adduser', name: 'adduser')]
     public function addUser(Request $request, ManagerRegistry $doctrine): Response {
         // get post TEMP
