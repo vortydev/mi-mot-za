@@ -45,6 +45,7 @@ class MessageController extends AbstractController
         foreach ($message->getMessages() as $m) {
 
             $reponses[$m->getId()] = array();
+            $reponses[$m->getId()]['ID'] = $m->getId();
             $reponses[$m->getId()]['Auteur'] = $m->getIdUser()->getUsername();
             $reponses[$m->getId()]['Message'] = $m->getContenu();
             $reponses[$m->getId()]['Reponses'] = $this->getReponses($m);
