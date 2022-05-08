@@ -14,6 +14,7 @@ Historique de modifications :
 13 avril 2022, Alberto, Gestion d'affichage des messages
 17 avril 2022, Alberto, Gestion d'ajout et suppresion de suggestions d'un message ou thread
 27 avril 2022, Alberto, ajout du formulaire for filtrer les message ou threads par utilisateur
+2 mai 2022, François-Nicolas, ajout des gestions de requêtes pour les threads
 ...
 =========================================================
 ****************************************/
@@ -31,14 +32,28 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-
 class MessageController extends AbstractController
 {
 
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
+    private function getReponses($message): ?array {
+
+        if (!count($message->getMessages())) {
+            return null;
+        }
+
+        $reponses = array();
+        foreach ($message->getMessages() as $m) {
+
+            $reponses[$m->getId()] = array();
+            $reponses[$m->getId()]['ID'] = $m->getId();
+            $reponses[$m->getId()]['Auteur'] = $m->getIdUser()->getUsername();
+            $reponses[$m->getId()]['Message'] = $m->getContenu();
+            $reponses[$m->getId()]['Reponses'] = $this->getReponses($m);
+        }
+
+        return $reponses;
+    }
+
     #[Route('/message', name: 'app_message')]
     /**
     *  @Security("is_granted('ROLE_ADMIN')")
@@ -65,9 +80,6 @@ class MessageController extends AbstractController
     }
 
     #[Route('/message/utilisateur', name: 'joueur_message')]
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     public function messageUtilisateur(ManagerRegistry $doctrine, Request $request): Response
     {
 
@@ -105,9 +117,6 @@ class MessageController extends AbstractController
     //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
     // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
     #[Route('/ajoutMedia', name: 'ajoutMedia')]
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     public function ajoutMedia(ManagerRegistry $doctrine, Request $request ) : Response
     {
 
@@ -121,7 +130,7 @@ class MessageController extends AbstractController
             $message->setIdUser($utilisateur);
             $message->setDateEmission(new \DateTime('now'));
             $message->setContenu($post['contenu']);
-            if(isset($post['idMessageParent'])){
+            if(isset($post['idMessageParent'])) {
                 $messageParent = $doctrine->getRepository(Message::class)->find($post['idMessageParent']);
                 $message->setIdParent($messageParent);
             }
@@ -164,9 +173,6 @@ class MessageController extends AbstractController
     //Gere une requete api provenant de l'application mobile et un thread ou un message dans la bd
     // la fonction s'adapte si c'est un message qui repond a un autre message ou un thread avec un messagea l'interiur
     #[Route('/supprimerMedia', name: 'supprimerMedia')]
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     public function supprimerMedia(ManagerRegistry $doctrine, Request $request )
     {
         
@@ -202,4 +208,92 @@ class MessageController extends AbstractController
 
     }
 
+    // Gère une requête API venant de l'application mobile
+    // Demandant tous les threads à afficher dans le forum
+    #[Route('/getAllMedia', name:'getAllMedia')]
+    public function getAllMedia(ManagerRegistry $doctrine, Request $request) {
+
+        if ($request->isMethod('post')) {
+
+            try {
+                $em=$doctrine->getManager();
+                
+                $threadRepos = $em->getRepository(Thread::class);
+
+                $threads = $threadRepos->findAll();
+
+                $json = array();
+
+                foreach ($threads as $thread) {
+
+                    $message = $thread->getIdMessage();
+                    $json[$thread->getId()] = array();
+                    $json[$thread->getId()]['ID'] = $thread->getId();
+                    $json[$thread->getId()]['Titre'] = $thread->getTitre();
+                    $json[$thread->getId()]['Auteur'] = $thread->getIdUser()->getUsername();
+                    $json[$thread->getId()]['Message'] = $message->getContenu();
+                    $json[$thread->getId()]['NbReponses'] = count($message->getMessages());
+                }
+
+                $json['ServerIP'] = gethostbyname(gethostname());
+
+                $jsonText = json_encode($json);
+            } catch(Exception $e) {
+                $response = new Response();
+                $response->setStatusCode(400);
+                return $response;
+            }
+            finally {
+
+                $response = new Response();
+                $response->setContent($jsonText);
+                $response->headers->set('Content-Type', 'application/json');
+                $response->setStatusCode(200);
+                return $response;
+            }
+        }
+    }
+
+    // Gère une requête d'API venant de l'app mobile
+    // Redonne le thread qui possède l'id envoyé en paramètre
+    #[Route('/getMedia/{threadId}', name:'getMedia')]
+    public function getMedia(ManagerRegistry $doctrine, Request $request, int $threadId) {
+
+        if ($request->isMethod('post')) {
+
+            //$jsonText = "";
+            try {
+                $em=$doctrine->getManager();
+                
+                $threadRepos = $em->getRepository(Thread::class);
+
+                $thread = $threadRepos->findOneBy(['id' => $threadId]);
+
+                $json = array();
+
+                $message = $thread->getIdMessage();
+                
+                $json['IDThread'] = $thread->getId();
+                $json['Titre'] = $thread->getTitre();
+                $json['Auteur'] = $thread->getIdUser()->getUsername();
+                $json['IDMessage'] = $message->getId();
+                $json['Message'] = $message->getContenu();
+                $json['Reponses'] = $this->getReponses($message);
+
+                $jsonText = json_encode($json);
+            } catch(Exception $e) {
+                $response = new Response();
+                $response->setStatusCode(400);
+                return $response;
+            }
+            finally {
+
+                $response = new Response();
+                $response->setContent($jsonText);
+                $response->headers->set('Content-Type', 'application/json');
+                $response->setStatusCode(200);
+                return $response;
+            }
+        }
+    }
 }

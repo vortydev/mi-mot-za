@@ -259,13 +259,13 @@ footer {
     flex-direction: column-reverse;
 }
 
-.logBox li {
+.logBox li, .logBox p {
     width: 100%;
     padding: 5px;
     padding-left: 10px;
 }
 
-.logBox li:hover {
+.logBox li:hover, .logBox p:hover {
     background-color: var(--grisa);
     border-radius: 4px;
 }
@@ -341,6 +341,37 @@ footer {
     width: 30%;
 }
 
+/* USER FILE */
+.flexUserFile {
+    width: 40%;
+    padding-top: 20px;
+    display: inline-block;
+    width: 100%;
+    margin: auto;
+    text-align: center  ;
+}
+
+.flexUserFile > form {
+    width: 100%;
+    margin: auto;
+}
+
+.flexUserFile > form > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.flexUserFile div > div {
+    width: 100%;
+    margin: auto;
+    display: inline-block;
+}
+
+.flexUserFile button {
+    margin-top: 10px;
+}
+
 /* PROFILE */
 .userProfile {
     width: 100%;
@@ -362,7 +393,7 @@ footer {
     flex-direction: row;
     background-color: var(--gris);
     border-radius: 4px;
-    padding: 20px;
+    padding: 10px;
 }
 
 .flexStats > span {
@@ -507,4 +538,13 @@ footer {
 
 .flexSuggBtn > button {
     display: inline-block;
+}
+
+.motProfile {
+    width: 60%;
+}
+
+.messageBox {
+    display: flex;
+    flex-direction: column-reverse;
 }
