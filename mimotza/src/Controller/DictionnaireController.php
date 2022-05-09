@@ -36,7 +36,6 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Form\AjouterMotType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class DictionnaireController extends AbstractController
 {
@@ -73,7 +72,7 @@ class DictionnaireController extends AbstractController
                 $em->persist($mot);
                 $em->flush();
                 $session = $request->getSession();
-                $session->getFlashBag()->add('action', "Le mot : ".$mot->getMot()."a été ajouté");
+                $session->getFlashBag()->add('addition', "Le mot : ".$mot->getMot()."a été ajouté");
               
 
                 return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
@@ -107,7 +106,7 @@ class DictionnaireController extends AbstractController
         $etat = $etatrepo->findBy(array('etat' => 'Refusé'));
         $suggestion->setIdEtatSuggestion($etat[0]);
         $session = $request->getSession();
-        $session->getFlashBag()->add('delete', "le mot suggèré : ".$suggestion->getMotSuggere()." a été réfusé");
+        $session->getFlashBag()->add('refuser', "le mot suggèré : ".$suggestion->getMotSuggere()." a été réfusé");
         //$em->remove($suggestion);
         $em->flush();
         return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
@@ -151,7 +150,7 @@ class DictionnaireController extends AbstractController
             $mot->setMot(strtoupper($suggestion->getMotSuggere()));
             $em->persist($mot);
             $em->flush();
-            $session->getFlashBag()->add('delete', "le mot suggeré : ".$suggestion->getMotSuggere()." a été accepté");
+            $session->getFlashBag()->add('accepter', "le mot suggeré : ".$suggestion->getMotSuggere()." a été accepté");
         }
         return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
     }
@@ -250,8 +249,7 @@ class DictionnaireController extends AbstractController
         $idMot = $_GET['idMot'];
         $mot=$doctrine->getRepository(Mot::class)->find($idMot);
         $em=$doctrine->getManager();
-        $session->getFlashBag()->add('action', "le mot : ".$mot->getMot()." a été accepté");
-
+        $session->getFlashBag()->add('supprimer', "le mot : ".$mot->getMot()." a été supprimé");
         $em->remove($mot);
         $em->flush();
 
