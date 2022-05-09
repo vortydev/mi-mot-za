@@ -250,6 +250,55 @@ class DictionnaireController extends AbstractController
     
     }
 
+    #[Route('/ajoutPartie', name: 'ajoutPartie')]
+    public function ajoutPartie(ManagerRegistry $doctrine, Request $request) : Response {
+
+        $response = new Response();
+        $post = $request->request->all();
+
+        if (isset($post)
+        && isset($post['win'])
+        && isset($post['score'])
+        && isset($post['temps'])
+        && isset($post['mot'])) {
+
+            $entityManager = $doctrine->getManager();
+            $date = date('Y-m-d H:i:s');
+            $motRepos = $entityManager->getRepository(Mot::class);
+            $mot = $motRepos->findOneBy(['id' => $post['mot']]);
+            
+            if (isset($mot)) {
+
+                try {
+                    $partie = new Partie;
+
+                    $partie->setIdUser($user)
+                    ->setWin($post['win'])
+                    ->setScore($post['score'])
+                    ->setTemps(date_create_from_format('H:i:s', $post['temps']))
+                    ->setDateEmission(date_create_from_format('Y-m-d H:i:s', $date))
+                    ->setMot($mot);
+
+                    $entityManager->persist($partie);
+
+                    $entityManager->flush();
+                    $response->setStatusCode(200);
+                    return $response;
+                } catch (Exception $e) {
+                    echo "Erreur pendant la sauvegarde de la partie.";
+                    $response->setStatusCode(400);
+                }
+            }
+            else {
+                echo "Erreur: Mot inexistant";
+                $response->setStatusCode(400);
+            }
+        }
+        else {
+            $response->setStatusCode(400);
+        }
+        return $response;
+    }
 }
 
 
