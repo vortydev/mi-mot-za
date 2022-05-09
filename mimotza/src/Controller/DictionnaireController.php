@@ -252,7 +252,5 @@ class DictionnaireController extends AbstractController
         return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
     
     }
-
+    
 }
-
-
