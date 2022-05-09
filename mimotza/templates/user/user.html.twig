@@ -32,15 +32,19 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
 {% endfor %}
 
 <main>
-<h1>Profil de {{user.username}}</h1>
-<img src="{{ user.avatar|e('html_attr') }}" alt="Il n'y a pas d'avatar pour ce joueur" width="150" height="150"/><br>
-<div class="stat">
+<h1 class="profileTitle">{{user.username}}</h1>
+<section class="userProfile">
+<div class="avatarBox">
+    <img src="{{ user.avatar|e('html_attr') }}" alt="Cet utilisateur n'a pas d'avatar." width="200" height="200"/>
+</div>
+<div class="stat flexStats">
     <span>Nombre de parties jouées: {{user.parties|length}}</span><br>
     <span>Nombre de parties gagnées: {{win}}</span><br>
     <span>Temps de jeu: {{time|date("Y:")}}{{(time|date("m"))-1}}:{{(time|date("d"))-1}}{{time|date(":H:i:s")}}</span><br>
     <span>Date de création du compte: {{user.dateCreation|date("d/m/Y")}}</span><br>
     <span>État du compte: {{user.idStatut.statut}}</span><br>
+    <button class="banBtn" type="button" onclick="window.location.href='/user/{{user.id}}/ban'">Ban/Unban</button>
 </div>
-<button type="button" onclick="window.location.href='/user/{{user.id}}/ban'">Ban/Unban</button>
+</section>
 </main>
 {% endblock %}

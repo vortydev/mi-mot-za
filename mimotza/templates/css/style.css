@@ -9,6 +9,7 @@ Date Nom Approuvé
 Historique de modifications :
 Date: 26/04/2022 Nom: Étienne Ménard Description: Création du fichier et layout de base
 Date: 27/04/2022 Nom: Étienne Ménard Description: Altération des éléments et de leur espacement
+Date: 28/04/2022 Nom: Étienne Ménard Description: CSS pour les mots, les messages et les profils d'utilisateurs
 ...
 =========================================================
 ****************************************/-->
@@ -50,6 +51,7 @@ h1, h2, h3, h4, h5 {
 
 h1 {
     margin-top: 25px;
+    text-align: center;
 }
 
 a, button, select {
@@ -57,7 +59,7 @@ a, button, select {
     transition: all 0.2s;
 }
 
-a {
+a, em {
     color: var(--bleu);
     text-decoration: none;
 }
@@ -189,7 +191,7 @@ button:hover {
     background-color: var(--bleua);
 }
 
-form, input {
+form, input, select {
     border-radius: 4px;
     border: none;
 }
@@ -209,7 +211,7 @@ footer {
 }
 
 /* CONNEXION */
-.loginTitle, .userTitle, .logTitle, .wordTitle {
+.loginTitle, .userTitle, .logTitle, .wordTitle, .profileTitle {
     text-align: center;
     margin-bottom: 20px;
 }
@@ -254,16 +256,16 @@ footer {
 
 .logBox ul {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
 }
 
-.logBox li {
+.logBox li, .logBox p {
     width: 100%;
     padding: 5px;
     padding-left: 10px;
 }
 
-.logBox li:hover {
+.logBox li:hover, .logBox p:hover {
     background-color: var(--grisa);
     border-radius: 4px;
 }
@@ -322,6 +324,10 @@ footer {
     margin-bottom: 5px;
 }
 
+.flexUser:hover {
+    background-color: var(--grisa);
+}
+
 .userName {
     margin-right: auto;
 }
@@ -335,78 +341,210 @@ footer {
     width: 30%;
 }
 
-/* WORD */
-
-.wordAdd {
-    width: 60%;
-    margin: auto;
-    flex-direction: row;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.wordAdd > form {
+/* USER FILE */
+.flexUserFile {
+    width: 40%;
+    padding-top: 20px;
+    display: inline-block;
     width: 100%;
+    margin: auto;
+    text-align: center  ;
 }
 
-.wordAdd > form > div {
+.flexUserFile > form {
+    width: 100%;
+    margin: auto;
+}
+
+.flexUserFile > form > div {
+    width: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.wordAdd div > div {
+.flexUserFile div > div {
+    width: 100%;
+    margin: auto;
+    display: inline-block;
+}
+
+.flexUserFile button {
+    margin-top: 10px;
+}
+
+/* PROFILE */
+.userProfile {
+    width: 100%;
+    margin: auto;
+}
+
+.avatarBox {
+    width: fit-content;
+    border: var(--bleu) 2px solid;
+    border-radius: 4px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.flexStats {
+    text-align: center;
+    width: 50%;
+    margin: auto;
+    flex-direction: row;
+    background-color: var(--gris);
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.flexStats > span {
+    display: inline;
     width: 100%;
 }
 
-.wordAdd div > input {
+.banBtn {
+    display: inline-block;
+    margin-top: 20px !important;
+    margin: auto;
+}
+
+/* WORD */
+.wordAddSubtitle, .wordDicSubtitle, .wordPropSubtitle {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* WORD ADD FORM */
+.wordAddForm {
+    width: 40%;
+    margin: auto;
+    flex-direction: row;
+    margin-bottom: 20px;
+    text-align: center;
+    background-color: var(--gris);
+    padding: 15px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-radius: 4px;
+}
+
+.wordAddForm > form {
+    width: 100%;
+}
+
+.wordAddForm > form > div {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.wordAddForm div > div{
+    width: 50%;
+}
+
+.wordAddForm div > div:first-child {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.wordAddForm div:nth-child(2) {
+    padding-top: 5px;
+    padding-right: 10px;
+}
+
+.wordAddForm input {
     width: 100%;
     margin: auto;
     margin-top: auto;
     margin-bottom: auto;
+    text-align: center;
+    text-transform: uppercase;
 }
 
-.wordAdd div > div:first-of-type {
-    padding-top: 2.5px;
-    padding-right: 10px;
+.wordAddForm div > button {
+    width: 130px;
+    display: inline-block;
 }
 
-.wordAdd div > button {
-    width: 200px;
-}
-
-.wordDic {
+/* WORD DICTIONNARY */
+.flexWordDic {
     width: 70%;
-    flex-direction: column;
     margin: auto;
+    margin-bottom: 20px;
     background-color: var(--gris);
     border-radius: 4px;
     padding: 20px;
+    padding-bottom: 10px;
+    flex-direction: row;
 }
 
-.wordProp {
-    width: 70%;
-    flex-direction: column;
+.flexWord  {
+    flex-direction: row;
+    width: 48%;
     margin: auto;
-    margin-top: 20px;
-    background-color: var(--gris);
-    border-radius: 4px;
-    padding: 20px;
-}
-
-.wordDicDiv {
-    width: 100%;
     border-radius: 4px;
     border: var(--bleu) 2px solid;
-    padding: 10px;
-    margin-bottom: 5px;
-}
-
-.wordDicWord {
-    margin-right: auto;
-}
-
-.wordStatBtn {
-    width: 30%;
+    padding: 5px;
+    margin-bottom: 10px;
     text-align: center;
-    
+}
+
+.flexWord:hover, .flexWordSugg:hover {
+    background-color: var(--grisa);
+}
+
+.flexWord:nth-child(odd) {
+    margin-right: 5px;
+}
+
+.flexWord:nth-child(even) {
+    margin-left: 5px;
+}
+
+.flexWord > p, .flexWord > a {
+    width: 50%;
+}
+
+/* WORD SUGGESTIONS */
+.flexWordProp {
+    width: 60%;
+    margin: auto;
+    margin-bottom: 20px;
+    background-color: var(--gris);
+    border-radius: 4px;
+    padding: 20px;
+    padding-bottom: 10px;
+    flex-direction:  column;
+}
+
+.flexWordSugg {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: var(--bleu) 2px solid;
+}
+
+.flexWordSugg > p {
+    padding-top: 5px;
+    width: 45%;
+}
+
+.flexSuggBtn {
+    width: 55%;
+}
+
+.flexSuggBtn > button {
+    display: inline-block;
+}
+
+.motProfile {
+    width: 60%;
+}
+
+.messageBox {
+    display: flex;
+    flex-direction: column-reverse;
 }

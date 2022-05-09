@@ -38,14 +38,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class DictionnaireController extends AbstractController
 {
-
+    //Accueil du gestion de mot qui affiche les mots et les suggestion des mts
+    #[Route('/GestionDuJeu', name: 'accueil_gestionDuJeu')]
     /**
     *  @Security("is_granted('ROLE_ADMIN')")
     */
-    //Accueil du gestion de mot qui affiche les mots et les suggestion des mts
-    #[Route('/GestionDuJeu', name: 'accueil_gestionDuJeu')]
     public function index(ManagerRegistry $doctrine, Request $request): Response
     {
+
         $em = $doctrine->getManager();
         $listeMots = $doctrine->getRepository(Mot::class)->findALL();
         //Cherhce les mots suggeres qui ont letat en attente(id : 1)
@@ -85,8 +85,12 @@ class DictionnaireController extends AbstractController
 
     //Gestion automatique d'un refus d'une suggestion des mots
     #[Route('/GestionDuJeu/refuseSuggestion', name: 'refuseSuggestion')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function refuseSuggestion(ManagerRegistry $doctrine, Request $request): Response
     {
+
         $id = $_GET['id'];
         $suggestion = new Suggestion;
         $etat = new EtatSuggestion;
@@ -105,8 +109,12 @@ class DictionnaireController extends AbstractController
 
     //Gestion automatique d'un ajout d'un mot avec un requete API
     #[Route('/GestionDuJeu/acceptSuggestion', name: 'acceptSuggestion')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function acceptSuggestion(ManagerRegistry $doctrine, Request $request): Response
     {
+
         $id = $_GET['id'];
         $em=$doctrine->getManager();
         $session = $request->getSession();
@@ -145,8 +153,12 @@ class DictionnaireController extends AbstractController
 
     //Redirecction vers les statistique d'un mot 
     #[Route('/GestionDuJeu/{idMot}', name: 'mot_stat')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function statistiquesMot(ManagerRegistry $doctrine, Request $request, $idMot): Response
     {
+
         $suggestion = new Suggestion;
         $etat = new EtatSuggestion;
         $em=$doctrine->getManager();    

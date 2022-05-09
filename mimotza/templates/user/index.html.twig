@@ -16,6 +16,8 @@ Date: 25/04/2022 Nom: Isabelle Rioux Description: Affichage de la liste de joueu
 Date: 26/04/2022 Nom: Isabelle Rioux Description: Ajout de la recherche d'un joueur
 Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
 Date: 27/04/2022 Nom: Étienne Ménard Description: Modification du titre de la page
+Date: 28/04/2022 Nom: Isabelle Rioux Description: Pagination de la liste de joueurs
+Date: 28/04/2022 Nom: François-Nicolas Gitzhofer Description: Ajout du formulaire pour l'ajout d'utilisateurs par fichier JSON
 ...
 =========================================================
 ****************************************/-->
@@ -35,10 +37,17 @@ Date: 27/04/2022 Nom: Étienne Ménard Description: Modification du titre de la 
         <a class="userLink" href="/user/{{user.id}}">Afficher le profil</a>
     </div>
     {% endfor %}
+
+    {% if page != 1 %}
+        <a href="/users/{{page - 1}}">Page précédente</a>
+    {% endif %}
+    {% if nbPage > page %}
+        <a href="/users/{{page + 1}}">Page suivante</a>
+    {% endif %}
     </section>
 
     <section class="flexUserFile">
-        
+        {{form(form_file)}}
     </section>
 </main>
 {% endblock %}

@@ -25,6 +25,8 @@ use App\Entity\Utilisateur;
 use App\Entity\Evenement;
 use App\Entity\Historique;
 use App\Entity\Statut;
+use App\Entity\Partie;
+use App\Entity\Mot;
 
 use App\Repository\UtilisateurRepository;
 use App\Repository\EvenementRepository;
@@ -37,11 +39,17 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\Validator\Constraints\DateTime;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 class EventController extends AbstractController
 {
     #[Route('/event', name: 'app_event')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function event(Request $request, ManagerRegistry $doctrine): Response
     {
+
         $code = 200;
         $error = null;
 
@@ -126,10 +134,18 @@ class EventController extends AbstractController
 
             switch ($eventType) {
 
-                case 2:
+                case 1:         // Inscription Utilisateur
+
+                    return $this->render('event/redirect.html.twig', [
+                        'eventType' => $eventType,
+                        'whereTo' => $whereTo
+                    ]);
+
+                    break;
+                case 2:         // Activation Utilisateur
                     if (isset($user) && $user->getIdStatut()->getId() != 2) {
                         
-                        $statutRepos = $entityManager->getRepository(Statut::class);                        
+                        $statutRepos = $entityManager->getRepository(Statut::class);
                         $statut = $statutRepos->findOneBy(['id' => 2]);
 
                         $user->setIdStatut($statut);
@@ -142,11 +158,11 @@ class EventController extends AbstractController
                         ]);
                     }
                     break;
-                case 3:
+                case 3:         // Désactivation Utilisateur
                     if (isset($user) && $user->getIdStatut()->getId() == 2) {
 
                         $statutRepos = $entityManager->getRepository(Statut::class);
-                        $statut = $statutRepos->findOneBy(['id' => 3]);
+                        $statut = $statutRepos->findOneBy(['id' => 1]);
 
                         $user->setIdStatut($statut);
 
@@ -157,6 +173,65 @@ class EventController extends AbstractController
                             'whereTo' => $whereTo
                         ]);
                     }
+                    break;
+                case 4:         // Banissement Utilisateur
+                    break;
+                case 5:         // Ajout Thread
+                    break;
+                case 6:         // Suppression Thread
+                    break;
+                case 7:         // Ajout Message
+                    break;
+                case 8:         // Suppression Message
+                    break;
+                case 9:         // Partie
+
+                    $post = $request->request->all();
+
+                    if (isset($post)
+                    && isset($post['win'])
+                    && isset($post['score'])
+                    && isset($post['temps'])
+                    && isset($post['mot'])) {
+
+                        $date = date('Y-m-d H:i:s');
+                        $motRepos = $entityManager->getRepository(Mot::class);
+                        $mot = $motRepos->findOneBy(['id' => $post['mot']]);
+                        
+                        if (isset($mot)) {
+                            $partie = new Partie;
+
+                            $partie->setIdUser($user)
+                            ->setWin($post['win'])
+                            ->setScore($post['score'])
+                            ->setTemps(date_create_from_format('Y-m-d H:i:s', $post['temps']))
+                            ->setDateEmission(date_create_from_format('Y-m-d H:i:s', $date))
+                            ->setMot($mot);
+
+                            $entityManager->persist($partie);
+
+                            $entityManager->flush();
+
+                            return $this->render('event/redirect.html.twig', [
+                                'user' => $user,
+                                'eventType' => $eventType,
+                                'whereTo' => $whereTo,
+                                'win' => $post['win'],
+                                'mot' => $mot
+                            ]);
+                        }
+                    }
+                    exit;
+                    break;
+                case 10:        // Ajout Langue
+                    break;
+                case 11:        // Suppression Langue
+                    break;
+                case 12:        // Ajout Mot
+                    break;
+                case 13:        // Suppression Mot
+                    break;
+                case 14:        // Suggestion Mot
                     break;
             }
         }

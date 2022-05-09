@@ -14,6 +14,8 @@ Date: 24/04/2022 Nom: Isabelle Rioux Description: Ajustement de l'affichage d'un
 Date: 26/04/2022 Nom: Isabelle Rioux Description: Gestion de la recherche d'un joueur et du bannissement
 Date: 26/04/2022 Nom: Étienne Ménard Description: Insertion d'utilisateurs dans la BD à partir d'un tableau JSON
 Date: 27/04/2022 Nom: Isabelle Rioux Description: Simplification de l'affichage de ban/unban et bandenied et empecher un admin d'etre banni
+Date: 28/04/2022 Nom: Isabelle Rioux Description: Pagination de la liste de joueurs
+Date: 28/04/2022 Nom: François-Nicolas Gitzhofer Description: Ajout de l'inscription d'utilisateur via fichier JSON
 ...
 =========================================================
 ****************************************/
@@ -26,6 +28,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,41 +43,73 @@ use App\Entity\Utilisateur;
 use App\Repository\UtilisateurRepository;
 use App\Entity\Partie;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 class UserController extends AbstractController
 {
-    #[Route('/user', name: 'user')]
-    public function index(ManagerRegistry $regis): Response
+    #[Route('/users/{page}', name: 'user')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
+    public function index(ManagerRegistry $regis,$page=1): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
-        $form=$this->createFormBuilder()
+        $formRecherche=$this->createFormBuilder()
         ->setAction($this->generateUrl('result'))
         ->setMethod('POST')
         ->add('username', SearchType::class, ['label'=>' '])
         ->add('envoyer', SubmitType::class, ['label'=>'Rechercher un joueur'])
         ->getForm();
-        
+
+        $addUserByFile = $this->createFormBuilder()
+        ->setAction($this->generateUrl('adduser'))
+        ->setMethod('POST')
+        ->add('jsonFile', FileType::class, [
+            'label' => ' ',
+            'mapped' => false,
+            'required' => false
+        ])
+        ->add('sender', HiddenType::class, [
+
+            'attr' => [
+                'value' => 'jsonFile'
+            ]
+        ])
+        ->add('envoyer', SubmitType::class, ['label' => 'Envoyer'])
+        ->getForm();
+
         $userRepository = $regis->getRepository(Utilisateur::class);
-        $users = $userRepository->findAll();
+
+        $query = $userRepository->createQueryBuilder('user')->getQuery();
+
+        $paginator = new Paginator($query);
+
+        $totalItems = count($paginator);
+        $pagesCount = ceil($totalItems / 20);
+
+        $paginator
+            ->getQuery()
+            ->setFirstResult(20 * ($page-1))
+            ->setMaxResults(20);
+
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
-            'list_users' => $users,
-            'form_user'=>$form->createView()
+            'list_users' => $paginator,
+            'form_user'=>$formRecherche->createView(),
+            'form_file' => $addUserByFile->createView(),
+            'page'=>$page,
+            'nbPage'=>$pagesCount
         ]);
     }
 
     #[Route('/user/{id}', name: 'particular_user')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function showUser(ManagerRegistry $regis, $id): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
@@ -94,13 +129,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/resultuser', name: 'result')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function showResearchResult(ManagerRegistry $regis): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
 
         $request = Request::createFromGlobals();
         $username = $request->get('form');
@@ -120,6 +153,7 @@ class UserController extends AbstractController
             ]);
         }
     }
+
     #[Route('/inscription', name: 'inscription')]
     public function inscription(ManagerRegistry $doctrine): Response {
         $formInscription = $this->createFormBuilder()
@@ -143,15 +177,14 @@ class UserController extends AbstractController
                 'form' => $formInscription->createView()
             ]);
     }
+
     #[Route('/user/{id}/ban', name: 'ban')]
+    /**
+    *  @Security("is_granted('ROLE_ADMIN')")
+    */
     public function banUser(ManagerRegistry $regis, $id): Response 
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }else if ($this->getUser()->getIdRole()->getRole() != "Administrateur") {
-            return $this->redirectToRoute('app_logout');
-        }
-        
+
         $em = $regis->getManager();
         $userRepository = $regis->getRepository(Utilisateur::class);
         $user = $userRepository->findOneBy(['id'=>$id]);
@@ -191,6 +224,7 @@ class UserController extends AbstractController
         // $encode = json_encode(array($post['form'], $post['form']));
 
         $post = $request->request->all();
+        $files = $request->files->all();
 
         // init managers
         $entityManager = $doctrine->getManager();
@@ -198,17 +232,10 @@ class UserController extends AbstractController
         $statutManager = $entityManager->getRepository(Statut::class);
         $userManager = $entityManager->getRepository(Utilisateur::class);
 
-        // generate objects
-        $roleUsager = null;
-        if (isset($post['form']['sender']) && $post['form']['sender'] == 'formWebsite') {
-            $roleUsager = $roleManager->findOneBy(['role' => 'Administrateur']);
-        }
-        else {
-            $roleUsager = $roleManager->findOneBy(['role' => 'Usager']);
-        }
-        //$roleUsager = $roleManager->findOneBy(['id' => 1]);
+        $roleUsager = $roleManager->findOneBy(['role' => 'Usager']);
         $statutInactif = $statutManager->findOneBy(['id' => 1]);
 
+<<<<<<< HEAD
     
 
         $users = array();
@@ -230,9 +257,183 @@ class UserController extends AbstractController
         }
         else {
 
+=======
+        // generate objects
+
+        if (isset($post['form']['sender'])) {
+
+            if ($post['form']['sender'] == 'formWebsite') {
+
+                $emailCheck = $userManager->findOneBy(['email' => $post['form']['email']]);
+                $usernameCheck = $userManager->findOneBy(['username' => $post['form']['username']]);
+
+                if ($emailCheck == null && $usernameCheck == null) {
+
+                    $user = new Utilisateur();
+                    $form = $post['form'];
+                    $user->setPrenom($form['prenom'])
+                        ->setNom($form['nom'])
+                        ->setEmail($form['email'])
+                        ->setUsername($form['username'])
+                        ->setMdp($form['mdp'])
+                        ->setAvatar(null)
+                        ->setIdRole($roleUsager)
+                        ->setIdStatut($statutInactif)
+                        ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
+
+                    $entityManager->persist($user);
+                }
+                // push to bd
+                $entityManager->flush();
+
+                return $this->render('user/confirmation.html.twig', [
+                    'controller_name' => 'poggers',
+                    'form' => $post['form'],
+                ]);
+            }
+            elseif ($post['form']['sender'] == 'jsonFile') {
+
+                $users = array();
+                $json = json_decode(file_get_contents($files['form']['jsonFile']->getPathname()), TRUE);
+
+                foreach ($json as $u) {
+                    //print_r($u);
+                    $emailCheck = $userManager->findOneBy(['email' => $u['email']]);
+                    $usernameCheck = $userManager->findOneBy(['username' => $u['username']]);
+    
+                    if ($emailCheck == null && $usernameCheck == null) {
+                        $user = new Utilisateur();
+    
+                        // load user data
+                        $user->setPrenom($u['prenom'])
+                        ->setNom($u['nom'])
+                        ->setEmail($u['email'])
+                        ->setUsername($u['username'])
+                        ->setMdp(password_hash($u['mdp'], PASSWORD_DEFAULT))
+                        ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
+    
+                        // set role
+                        if (isset($u['role']) && $roleManager->findOneBy(['id' => $u['role']]) != null) {
+                            $user->setIdRole($roleManager->findOneBy(['id' => $u['role']]));
+                        }
+                        else {
+                            $user->setIdRole($roleUsager);
+                        }
+                        
+                        // set statut
+                        if (isset($u['statut']) && $statutManager->findOneBy(['id' => $u['statut']]) != null) {
+                            $user->setIdStatut($statutManager->findOneBy(['id' => $u['statut']]));
+                        }
+                        else {
+                            $user->setIdStatut($statutInactif);
+                        }
+    
+                        if (isset($u['avatar'])) {
+                            $user->setAvatar($u['avatar']);
+                        }
+                        else {
+                            $user->setAvatar(null);
+                        }
+    
+                        array_push($users, $user);
+    
+                        // save user
+                        $entityManager->persist($user);
+                    }
+                }
+                // push to bd
+                $entityManager->flush();
+
+                return $this->render('user/confirmation.html.twig', [
+                    'controller_name' => 'poggers',
+                    'users' => $users
+                ]);
+            }
+        }
+
+        return $this->render('user/confirmation.html.twig', [
+            'controller_name' => 'poggers'
+        ]);
+    }
+}
+
+
+// TEMP
+        // $liste = array(
+        //     array(
+        //         'prenom' => 'Étienne',
+        //         'nom' => 'Ménard',
+        //         'email' => 'etienne.dmenard@gmail.com',
+        //         'username' => 'vorty',
+        //         'mdp' => 'abc123',
+        //         'role' => 2,
+        //         'statut' => 2,
+        //     ),
+        //     array(
+        //         'prenom' => 'Isabelle',
+        //         'nom' => 'Rioux',
+        //         'email' => 'isabelle.rioux@gmail.com',
+        //         'username' => 'isa',
+        //         'mdp' => 'abc123'
+        //     ),
+        // );
+
+        // $json = json_encode($liste);
+
+        // $data = $request->getContent();
+        // $data = json_decode($json, true);
+
+            // MESSAGE POUR ÉTIENNE :
+            // Je suis plus sûr de ce que tu voulais faire pour l'inscription, donc j'ai gardé les deux
+
+            // Mon code que j'avais
+            // loop through array and load create each user
+            /*foreach ($data as $u) {
+                $emailCheck = $userManager->findOneBy(['email' => $post['form']['email']]);
+                $usernameCheck = $userManager->findOneBy(['username' => $u['username']]);
+
+                if ($emailCheck == null && $usernameCheck == null) {
+                    $user = new Utilisateur();
+
+                    // load user data
+                    $user->setPrenom($u['prenom'])
+                    ->setNom($u['nom'])
+                    ->setEmail($u['email'])
+                    ->setUsername($u['username'])
+                    ->setMdp(password_hash($u['mdp'], PASSWORD_DEFAULT))
+                    ->setAvatar(null)
+                    ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
+
+                    // set role
+                    if (!empty($u['role']) && $roleManager->findOneBy(['id' => $u['role']]) != null) {
+                        $user->setIdRole($roleManager->findOneBy(['id' => $u['role']]));
+                    }
+                    else {
+                        $user->setIdRole($roleUsager);
+                    }
+                    
+                    // set statut
+                    if (!empty($u['statut']) && $statutManager->findOneBy(['id' => $u['statut']]) != null) {
+                        $user->setIdStatut($statutManager->findOneBy(['id' => $u['statut']]));
+                    }
+                    else {
+                        $user->setIdStatut($statutInactif);
+                    }
+
+                    if (!empty($u['avatar'])) {
+                        $user->setAvatar($u['avatar']);
+                    }
+
+                    array_push($users, $user);
+
+                    // save user
+                    $entityManager->persist($user);
+                }
+            }*/
+>>>>>>> 8e0e71b7244960aa43b37da980238f3fb7505079
             
             // Le code que tu as ajouté
-            $emailCheck = $userManager->findOneBy(['email' => $post['form']['email']]);
+            /*$emailCheck = $userManager->findOneBy(['email' => $post['form']['email']]);
             $usernameCheck = $userManager->findOneBy(['username' => $post['form']['username']]);
 
             if ($emailCheck == null && $usernameCheck == null) {
@@ -271,6 +472,7 @@ class UserController extends AbstractController
                 $entityManager->persist($user);
                 // jusqu'ici
             }
+<<<<<<< HEAD
         }
         // push to bd
         $entityManager->flush();        
@@ -340,3 +542,6 @@ class UserController extends AbstractController
         return $response;
     }
 }
+=======
+        }*/
+>>>>>>> 8e0e71b7244960aa43b37da980238f3fb7505079
