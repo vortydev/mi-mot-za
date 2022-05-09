@@ -249,6 +249,7 @@ class UserController extends AbstractController
                 $response = new Response();
                 $response->setStatusCode(200);
             } else {
+                $response = new Response();
                 $response->setStatusCode(416);
             }
             return $response;
