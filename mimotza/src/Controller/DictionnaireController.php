@@ -36,13 +36,8 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Form\AjouterMotType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
-
 class DictionnaireController extends AbstractController
 {
-
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     //Accueil du gestion de mot qui affiche les mots et les suggestion des mts
     #[Route('/GestionDuJeu', name: 'accueil_gestionDuJeu')]
     /**
@@ -166,7 +161,7 @@ class DictionnaireController extends AbstractController
 
         $suggestion = new Suggestion;
         $etat = new EtatSuggestion;
-        $em=$doctrine->getManager();
+        $em=$doctrine->getManager();    
         $motrepo = $em->getRepository(Mot::class);
         $mot = $motrepo->find($idMot);
 
@@ -207,22 +202,19 @@ class DictionnaireController extends AbstractController
 
     //Gere une requete api provenant de l'application mobile et ajoute une suggestion dans la bd
     #[Route('/ajoutSuggestion', name: 'ajoutSuggestion')]
-    /**
-    *  @Security("is_granted('ROLE_ADMIN')")
-    */
     public function ajoutSuggestion(ManagerRegistry $doctrine, Request $request ) : Response
     {
         if($request->isMethod('post')){
             $post = $request->request->all();
             $suggestion = new Suggestion;
             $em=$doctrine->getManager();
-
+            
             $etat = $doctrine->getRepository(EtatSuggestion::class)->findBy(array('etat' => 'En attente'));
             $langue = $doctrine->getRepository(Langue::class)->findBy(array('langue' => $post['langue']));
             $user =  $doctrine->getRepository(Utilisateur::class)->find($post['idUser']);
             
             $suggestion->setIdUser($user);
-            $suggestion->setMotSuggere($suggestion->getMotSuggere($post['mot']));
+            $suggestion->setMotSuggere($post['mot']);
             $suggestion->setIdEtatSuggestion($etat[0]);
             $suggestion->setDateEmission(new \DateTime('now'));
             $suggestion->setIdLangue($langue[0]);
@@ -240,6 +232,9 @@ class DictionnaireController extends AbstractController
             $response->setStatusCode(200);
             return $response;
         }
+        $response = new Response();
+        $response->setStatusCode(400);
+        return $response;
     }
 
     
@@ -256,7 +251,5 @@ class DictionnaireController extends AbstractController
         return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
     
     }
-
+    
 }
-
-
