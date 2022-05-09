@@ -38,6 +38,7 @@ use App\Entity\Statut;
 use App\Repository\StatutRepository;
 use App\Entity\Utilisateur;
 use App\Repository\UtilisateurRepository;
+use App\Entity\Partie;
 
 class UserController extends AbstractController
 {
@@ -208,30 +209,7 @@ class UserController extends AbstractController
         //$roleUsager = $roleManager->findOneBy(['id' => 1]);
         $statutInactif = $statutManager->findOneBy(['id' => 1]);
 
-        // TEMP
-        // $liste = array(
-        //     array(
-        //         'prenom' => 'Étienne',
-        //         'nom' => 'Ménard',
-        //         'email' => 'etienne.dmenard@gmail.com',
-        //         'username' => 'vorty',
-        //         'mdp' => 'abc123',
-        //         'role' => 2,
-        //         'statut' => 2,
-        //     ),
-        //     array(
-        //         'prenom' => 'Isabelle',
-        //         'nom' => 'Rioux',
-        //         'email' => 'isabelle.rioux@gmail.com',
-        //         'username' => 'isa',
-        //         'mdp' => 'abc123'
-        //     ),
-        // );
-
-        // $json = json_encode($liste);
-
-        // $data = $request->getContent();
-        // $data = json_decode($json, true);
+    
 
         $users = array();
 
@@ -252,53 +230,6 @@ class UserController extends AbstractController
         }
         else {
 
-            // MESSAGE POUR ÉTIENNE :
-            // Je suis plus sûr de ce que tu voulais faire pour l'inscription, donc j'ai gardé les deux
-
-            // Mon code que j'avais
-            // loop through array and load create each user
-            /*foreach ($data as $u) {
-                $emailCheck = $userManager->findOneBy(['email' => $post['form']['email']]);
-                $usernameCheck = $userManager->findOneBy(['username' => $u['username']]);
-
-                if ($emailCheck == null && $usernameCheck == null) {
-                    $user = new Utilisateur();
-
-                    // load user data
-                    $user->setPrenom($u['prenom'])
-                    ->setNom($u['nom'])
-                    ->setEmail($u['email'])
-                    ->setUsername($u['username'])
-                    ->setMdp(password_hash($u['mdp'], PASSWORD_DEFAULT))
-                    ->setAvatar(null)
-                    ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
-
-                    // set role
-                    if (!empty($u['role']) && $roleManager->findOneBy(['id' => $u['role']]) != null) {
-                        $user->setIdRole($roleManager->findOneBy(['id' => $u['role']]));
-                    }
-                    else {
-                        $user->setIdRole($roleUsager);
-                    }
-                    
-                    // set statut
-                    if (!empty($u['statut']) && $statutManager->findOneBy(['id' => $u['statut']]) != null) {
-                        $user->setIdStatut($statutManager->findOneBy(['id' => $u['statut']]));
-                    }
-                    else {
-                        $user->setIdStatut($statutInactif);
-                    }
-
-                    if (!empty($u['avatar'])) {
-                        $user->setAvatar($u['avatar']);
-                    }
-
-                    array_push($users, $user);
-
-                    // save user
-                    $entityManager->persist($user);
-                }
-            }*/
             
             // Le code que tu as ajouté
             $emailCheck = $userManager->findOneBy(['email' => $post['form']['email']]);
@@ -362,5 +293,50 @@ class UserController extends AbstractController
     #[Route('/adduserfile', name: 'adduserfile')]
     public function addUserFile(Request $request, ManagerRegistry $doctrine): Response {
         return $this->render('user/index.html.twig');
+    }
+    #[Route('/userProfile', name: 'userPrifleAPI')]
+    public function userProfileAPI(Request $request, ManagerRegistry $doctrine ): Response {
+        $response = new Response();
+        if($request->isMethod('post')){
+            $post = $request->request->all();
+            $username = $post['username'];
+            $userRepository = $doctrine->getRepository(Utilisateur::class);
+            $user = $userRepository->findOneBy(['username'=>$username]);
+            $partieRepository =  $doctrine->getRepository(Partie::class);
+            $partiesJoue = $partieRepository->findBy(array('idUser' => $user->getId()));
+            $tempsJoue = new \DateTime('0000-01-01 0:0:0');
+            $nbWin = 0;
+            foreach($partiesJoue as $partie){
+                $tempsJoue->add($partie->getTemps()->format('H:i:s'));
+                
+                if($partie->getWin()){
+                    $nbWin = $nbWin + 1;
+                }
+            }
+      
+
+            if($user){
+                $json = array();
+                $json[$username] = array();
+                $json[$username]['idOrigin']=$user->getId();
+                $json[$username]['parties']=count($partiesJoue);
+                $json[$username]['partiesWin']=$nbWin;
+                $json[$username]['tempsJoue']=$tempsJoue->format('H:i:s');
+                $json[$username]['date']=$user->getDateCreation()->format('H:i:s');
+            
+                $jsonText = json_encode($json);
+                $response->setContent($jsonText);
+                $response->headers->set('Content-Type','application/json');
+                $response->setStatusCode(200);
+                
+            }else{
+
+                $response->setStatusCode(416);
+            
+            }
+        }else{
+            $response->setStatusCode(500);
+        }
+        return $response;
     }
 }
