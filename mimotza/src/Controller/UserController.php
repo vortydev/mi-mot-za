@@ -234,6 +234,7 @@ class UserController extends AbstractController
                     if ($userCheck->getMdp() == password_hash($post['mdp'], PASSWORD_DEFAULT)) {
                         $response = new Response();
                         //add send user data https://hotexamples.com/fr/examples/symfony.component.httpfoundation/JsonResponse/setData/php-jsonresponse-setdata-method-examples.html
+                        $response->setData($userCheck);
                         $response->setStatusCode(200);
                     }else {
                         $response = new Response();
