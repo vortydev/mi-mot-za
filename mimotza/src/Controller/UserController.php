@@ -216,6 +216,37 @@ class UserController extends AbstractController
         }
     }
 
+    #[Route('/loginAPI', name: 'loginAPI')]
+    public function loginAPI(Request $request, ManagerRegistry $doctrine): Response {
+        if($request->isMethod('post')){
+            $post = $request->request->all();
+            $entityManager = $doctrine->getManager();
+            $userManager = $entityManager->getRepository(Utilisateur::class);
+
+            $userCheck = $userManager->findOneBy(['username' => $post['username']]);
+
+            //si username valide, verifie si le mdp est valide, verifie si utilisateur banni
+            if ($userCheck != null){
+                if ($userCheck->getStatut()->getId() == 3){
+                    $response = new Response();
+                    $response->setStatusCode(403);
+                }else{
+                    if ($userCheck->getMdp() == password_hash($post['mdp'], PASSWORD_DEFAULT)) {
+                        $response = new Response();
+                        $response->setStatusCode(200);
+                    }else {
+                        $response = new Response();
+                        $response->setStatusCode(401);
+                    }
+                }
+            }else {
+                $response = new Response();
+                $response->setStatusCode(416);
+            }
+            return $response;
+        }
+    }
+
     #[Route('/adduserAPI', name: 'adduserAPI')]
     public function addUserAPI(Request $request, ManagerRegistry $doctrine): Response {
 
