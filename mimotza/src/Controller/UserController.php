@@ -334,13 +334,10 @@ class UserController extends AbstractController
             $nbWin = 0;
             foreach($partiesJoue as $partie){
                 $tempsJoue->add($partie->getTemps()->format('H:i:s'));
-                
                 if($partie->getWin()){
                     $nbWin = $nbWin + 1;
                 }
             }
-      
-
             if($user){
                 $json = array();
                 $json[$username] = array();
@@ -348,17 +345,15 @@ class UserController extends AbstractController
                 $json[$username]['parties']=count($partiesJoue);
                 $json[$username]['partiesWin']=$nbWin;
                 $json[$username]['tempsJoue']=$tempsJoue->format('H:i:s');
-                $json[$username]['date']=$user->getDateCreation()->format('H:i:s');
-            
+                $json[$username]['date']=$user->getDateCreation()->format('d/m/y');
+                $json[$username]['img']= $user->getAvatar();
                 $jsonText = json_encode($json);
                 $response->setContent($jsonText);
                 $response->headers->set('Content-Type','application/json');
                 $response->setStatusCode(200);
-                
             }else{
                 //
                 $response->setStatusCode(416);
-            
             }
         }else{
             $response->setStatusCode(500);
