@@ -67,7 +67,7 @@ class DictionnaireController extends AbstractController
                 $em->persist($mot);
                 $em->flush();
                 $session = $request->getSession();
-                $session->getFlashBag()->add('action', "Le mot : ".$mot->getMot()."a été ajouté");
+                $session->getFlashBag()->add('addition', "Le mot : ".$mot->getMot()."a été ajouté");
               
 
                 return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
@@ -101,7 +101,7 @@ class DictionnaireController extends AbstractController
         $etat = $etatrepo->findBy(array('etat' => 'Refusé'));
         $suggestion->setIdEtatSuggestion($etat[0]);
         $session = $request->getSession();
-        $session->getFlashBag()->add('delete', "le mot suggèré : ".$suggestion->getMotSuggere()." a été réfusé");
+        $session->getFlashBag()->add('refuser', "le mot suggèré : ".$suggestion->getMotSuggere()." a été réfusé");
         //$em->remove($suggestion);
         $em->flush();
         return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
@@ -145,7 +145,7 @@ class DictionnaireController extends AbstractController
             $mot->setMot(strtoupper($suggestion->getMotSuggere()));
             $em->persist($mot);
             $em->flush();
-            $session->getFlashBag()->add('delete', "le mot suggeré : ".$suggestion->getMotSuggere()." a été accepté");
+            $session->getFlashBag()->add('accepter', "le mot suggeré : ".$suggestion->getMotSuggere()." a été accepté");
         }
         return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
     }
@@ -161,7 +161,7 @@ class DictionnaireController extends AbstractController
 
         $suggestion = new Suggestion;
         $etat = new EtatSuggestion;
-        $em=$doctrine->getManager();
+        $em=$doctrine->getManager();    
         $motrepo = $em->getRepository(Mot::class);
         $mot = $motrepo->find($idMot);
 
@@ -208,13 +208,13 @@ class DictionnaireController extends AbstractController
             $post = $request->request->all();
             $suggestion = new Suggestion;
             $em=$doctrine->getManager();
-
+            
             $etat = $doctrine->getRepository(EtatSuggestion::class)->findBy(array('etat' => 'En attente'));
             $langue = $doctrine->getRepository(Langue::class)->findBy(array('langue' => $post['langue']));
             $user =  $doctrine->getRepository(Utilisateur::class)->find($post['idUser']);
             
             $suggestion->setIdUser($user);
-            $suggestion->setMotSuggere($suggestion->getMotSuggere($post['mot']));
+            $suggestion->setMotSuggere($post['mot']);
             $suggestion->setIdEtatSuggestion($etat[0]);
             $suggestion->setDateEmission(new \DateTime('now'));
             $suggestion->setIdLangue($langue[0]);
@@ -232,6 +232,9 @@ class DictionnaireController extends AbstractController
             $response->setStatusCode(200);
             return $response;
         }
+        $response = new Response();
+        $response->setStatusCode(400);
+        return $response;
     }
 
     
@@ -241,8 +244,7 @@ class DictionnaireController extends AbstractController
         $idMot = $_GET['idMot'];
         $mot=$doctrine->getRepository(Mot::class)->find($idMot);
         $em=$doctrine->getManager();
-        $session->getFlashBag()->add('action', "le mot : ".$mot->getMot()." a été accepté");
-
+        $session->getFlashBag()->add('supprimer', "le mot : ".$mot->getMot()." a été supprimé");
         $em->remove($mot);
         $em->flush();
 
@@ -250,6 +252,56 @@ class DictionnaireController extends AbstractController
     
     }
 
+    #[Route('/ajoutPartie', name: 'ajoutPartie')]
+    public function ajoutPartie(ManagerRegistry $doctrine, Request $request) : Response {
+
+        $response = new Response();
+        $post = $request->request->all();
+
+        if (isset($post)
+        && isset($post['win'])
+        && isset($post['score'])
+        && isset($post['temps'])
+        && isset($post['mot'])) {
+
+            $entityManager = $doctrine->getManager();
+            $date = date('Y-m-d H:i:s');
+            $motRepos = $entityManager->getRepository(Mot::class);
+            $userRepos = $entityManager->getRepository(Utilisateur::class);
+            $mot = $motRepos->findOneBy(['id' => $post['mot']]);
+            $user = $userRepos->findOneBy(['id' => $post['idUser']]);
+            if (isset($mot) && isset($user)) {
+
+                try {
+                    $partie = new Partie;
+
+                    $partie->setIdUser($user)
+                    ->setWin($post['win'])
+                    ->setScore($post['score'])
+                    ->setTemps(date_create_from_format('H:i:s', $post['temps']))
+                    ->setDateEmission(date_create_from_format('Y-m-d H:i:s', $date))
+                    ->setMot($mot);
+
+                    $entityManager->persist($partie);
+
+                    $entityManager->flush();
+                    $response->setStatusCode(200);
+                    return $response;
+                } catch (Exception $e) {
+                    echo "Erreur pendant la sauvegarde de la partie.";
+                    $response->setStatusCode(400);
+                }
+            }
+            else {
+                echo "Erreur: Mot ou utilisateur inexistant";
+                $response->setStatusCode(400);
+            }
+        }
+        else {
+            $response->setStatusCode(400);
+        }
+        return $response;
+    }
 }
 
 

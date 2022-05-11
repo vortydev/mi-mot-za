@@ -25,6 +25,8 @@ use App\Entity\Utilisateur;
 use App\Entity\Evenement;
 use App\Entity\Historique;
 use App\Entity\Statut;
+use App\Entity\Partie;
+use App\Entity\Mot;
 
 use App\Repository\UtilisateurRepository;
 use App\Repository\EvenementRepository;
@@ -143,7 +145,7 @@ class EventController extends AbstractController
                 case 2:         // Activation Utilisateur
                     if (isset($user) && $user->getIdStatut()->getId() != 2) {
                         
-                        $statutRepos = $entityManager->getRepository(Statut::class);                        
+                        $statutRepos = $entityManager->getRepository(Statut::class);
                         $statut = $statutRepos->findOneBy(['id' => 2]);
 
                         $user->setIdStatut($statut);
@@ -183,6 +185,14 @@ class EventController extends AbstractController
                 case 8:         // Suppression Message
                     break;
                 case 9:         // Partie
+
+                    /*return $this->render('event/redirect.html.twig', [
+                    'user' => $user,
+                    'eventType' => $eventType,
+                    'whereTo' => $whereTo,
+                    'win' => $post['win'],
+                    'mot' => $mot
+                    ]);*/
                     break;
                 case 10:        // Ajout Langue
                     break;
