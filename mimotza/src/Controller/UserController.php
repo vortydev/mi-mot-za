@@ -227,14 +227,13 @@ class UserController extends AbstractController
 
             //si username valide, verifie si le mdp est valide, verifie si utilisateur banni
             if ($userCheck != null){
-                if ($userCheck->getStatut()->getId() == 3){
+                if ($userCheck->getIdStatut()->getId() == 3){
                     $response = new Response();
                     $response->setStatusCode(403);
                 }else{
-                    if ($userCheck->getMdp() == password_hash($post['mdp'], PASSWORD_DEFAULT)) {
+                    if (password_verify($post['mdp'], $userCheck->getMdp())) {
                         $response = new Response();
-                        //add send user data https://hotexamples.com/fr/examples/symfony.component.httpfoundation/JsonResponse/setData/php-jsonresponse-setdata-method-examples.html
-                        $response->setData($userCheck);
+                        $response->setContent("{'idOrigin':'".$userCheck->getId()."', 'prenom':'".$userCheck->getPrenom()."', 'nom':'".$userCheck->getNom()."','username':'".$userCheck->getUsername()."'}");
                         $response->setStatusCode(200);
                     }else {
                         $response = new Response();
