@@ -232,6 +232,17 @@ class UserController extends AbstractController
                     $response->setStatusCode(403);
                 }else{
                     if (password_verify($post['mdp'], $userCheck->getMdp())) {
+                        $query = $entityManager->createQueryBuilder();
+
+                        $query->update('App\Entity\Utilisateur','user');
+                        $query->set('user.idStatut',':statut');
+                        $query->setParameter('statut',2);
+
+                        $query->where('user.username LIKE :username');
+                        $query->setParameter('username',$userCheck->getUsername());
+        
+                        $query->getQuery()->execute();
+
                         $response = new Response();
                         $response->setContent("{'idOrigin':'".$userCheck->getId()."', 'prenom':'".$userCheck->getPrenom()."', 'nom':'".$userCheck->getNom()."','username':'".$userCheck->getUsername()."'}");
                         $response->setStatusCode(200);
