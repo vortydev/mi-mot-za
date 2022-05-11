@@ -217,6 +217,49 @@ class UserController extends AbstractController
         }
     }
 
+    #[Route('/loginAPI', name: 'loginAPI')]
+    public function loginAPI(Request $request, ManagerRegistry $doctrine): Response {
+        if($request->isMethod('post')){
+            $post = $request->request->all();
+            $entityManager = $doctrine->getManager();
+            $userManager = $entityManager->getRepository(Utilisateur::class);
+
+            $userCheck = $userManager->findOneBy(['username' => $post['username']]);
+
+            //si username valide, verifie si le mdp est valide, verifie si utilisateur banni
+            if ($userCheck != null){
+                if ($userCheck->getIdStatut()->getId() == 3){
+                    $response = new Response();
+                    $response->setStatusCode(403);
+                }else{
+                    if (password_verify($post['mdp'], $userCheck->getMdp())) {
+                        $query = $entityManager->createQueryBuilder();
+
+                        $query->update('App\Entity\Utilisateur','user');
+                        $query->set('user.idStatut',':statut');
+                        $query->setParameter('statut',2);
+
+                        $query->where('user.username LIKE :username');
+                        $query->setParameter('username',$userCheck->getUsername());
+        
+                        $query->getQuery()->execute();
+
+                        $response = new Response();
+                        $response->setContent("{'idOrigin':'".$userCheck->getId()."', 'prenom':'".$userCheck->getPrenom()."', 'nom':'".$userCheck->getNom()."','username':'".$userCheck->getUsername()."'}");
+                        $response->setStatusCode(200);
+                    }else {
+                        $response = new Response();
+                        $response->setStatusCode(401);
+                    }
+                }
+            }else {
+                $response = new Response();
+                $response->setStatusCode(416);
+            }
+            return $response;
+        }
+    }
+
     #[Route('/adduserAPI', name: 'adduserAPI')]
     public function addUserAPI(Request $request, ManagerRegistry $doctrine): Response {
 
