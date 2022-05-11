@@ -265,9 +265,10 @@ class DictionnaireController extends AbstractController
             $entityManager = $doctrine->getManager();
             $date = date('Y-m-d H:i:s');
             $motRepos = $entityManager->getRepository(Mot::class);
+            $userRepos = $entityManager->getRepository(Utilisateur::class);
             $mot = $motRepos->findOneBy(['id' => $post['mot']]);
-            
-            if (isset($mot)) {
+            $user = $userRepos->findOneBy(['id' => $post['idUser']]);
+            if (isset($mot) && isset($user)) {
 
                 try {
                     $partie = new Partie;
@@ -290,7 +291,7 @@ class DictionnaireController extends AbstractController
                 }
             }
             else {
-                echo "Erreur: Mot inexistant";
+                echo "Erreur: Mot ou utilisateur inexistant";
                 $response->setStatusCode(400);
             }
         }
