@@ -20,6 +20,7 @@ Historique de modifications :
 ****************************************/
 
 use App\Entity\Mot;
+use App\Entity\MotsJeu;
 use App\Entity\Langue;
 use App\Entity\Suggestion;
 use App\Entity\EtatSuggestion;
@@ -302,6 +303,65 @@ class DictionnaireController extends AbstractController
         }
         return $response;
     }
+
+    #[Route('/GenererMotJouer', name: 'GenererMotJouer')]
+    public function GenererMotJouer(ManagerRegistry $doctrine, Request $request) : Response {
+        $em=$doctrine->getManager();
+        $motsRepos = $em->getRepository(Mot::class);
+        $mots = $motsRepos->findAll();
+        $motsjeu = $em->getRepository(MotsJeu::class)->findAll();
+
+       
+        $date = $motsjeu[count($motsjeu)-1]->getDate();
+        $date->modify('+1 day');
+        for($i=0; $i < 200; $i++){
+            $motJeu = new MotsJeu;
+            $motJeu->setMot($mots[rand(0,count($mots) - 1)]);
+            $motJeu->setDate($date);
+            $em->persist($motJeu);
+            $em->flush();
+            $date->modify('+1 day');
+        }
+        return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
+
+    }
+
+    #[Route('/syncMotJeu', name: 'syncMotJeu')]
+    public function syncMotJeu(ManagerRegistry $doctrine, Request $request) : Response {
+        $date = new \DateTime('2022-05-19');
+    
+        
+        $em=$doctrine->getManager();
+        $motsjeu = $em->getRepository(MotsJeu::class)->findBy(array('date' => $date));
+        
+        $idMotJeu = $motsjeu[0]->getId();
+      
+        $json = array();
+        for($i=$idMotJeu;$i>$idMotJeu - 5 && $i > 0;$i--){
+            $motJeu = $em->getRepository(MotsJeu::class)->find($i);
+            $motDuJour =  $motJeu->getMot();
+            
+            array_push($json,array(
+                'idmot' => $motDuJour->getId(),
+                'mot'=>$motDuJour->getMot(),
+                'date'=>$motJeu->getDate()->format('Y-m-d')
+
+            ));
+            
+        }
+        $response = new Response;
+        $jsonText = json_encode($json);
+        $response->setContent($jsonText);
+        $response->headers->set('Content-Type','application/json');
+        $response->setStatusCode(200);
+        
+        return $response;
+    }
 }
+
+
+
+
+
 
 
