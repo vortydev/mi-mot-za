@@ -260,6 +260,37 @@ class UserController extends AbstractController
         }
     }
 
+    #[Route('/logoutAPI', name: 'logoutAPI')]
+    public function logoutAPI(Request $request, ManagerRegistry $doctrine): Response {
+        if($request->isMethod('post')){
+            $post = $request->request->all();
+            $entityManager = $doctrine->getManager();
+            $userManager = $entityManager->getRepository(Utilisateur::class);
+
+            $userCheck = $userManager->findOneBy(['id' => $post['id']]);
+
+            if ($userCheck != null){
+                $query = $entityManager->createQueryBuilder();
+
+                $query->update('App\Entity\Utilisateur','user');
+                $query->set('user.idStatut',':statut');
+                $query->setParameter('statut',1);
+
+                $query->where('user.username LIKE :username');
+                $query->setParameter('username',$userCheck->getUsername());
+
+                $query->getQuery()->execute();
+
+                $response = new Response();
+                $response->setStatusCode(200);
+            }else {
+                $response = new Response();
+                $response->setStatusCode(416);
+            }
+            return $response;
+        }
+    }
+
     #[Route('/adduserAPI', name: 'adduserAPI')]
     public function addUserAPI(Request $request, ManagerRegistry $doctrine): Response {
 
