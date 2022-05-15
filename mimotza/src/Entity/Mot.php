@@ -31,9 +31,13 @@ class Mot
     #[ORM\OneToMany(mappedBy: 'mot', targetEntity: Partie::class)]
     private $parties;
 
+    #[ORM\OneToMany(mappedBy: 'mot', targetEntity: MotsJeu::class)]
+    private $motsJeux;
+
     public function __construct()
     {
         $this->parties = new ArrayCollection();
+        $this->motsJeux = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -101,6 +105,36 @@ class Mot
             // set the owning side to null (unless already changed)
             if ($party->getMot() === $this) {
                 $party->setMot(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MotsJeu>
+     */
+    public function getMotsJeux(): Collection
+    {
+        return $this->motsJeux;
+    }
+
+    public function addMotsJeux(MotsJeu $motsJeux): self
+    {
+        if (!$this->motsJeux->contains($motsJeux)) {
+            $this->motsJeux[] = $motsJeux;
+            $motsJeux->setMot($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMotsJeux(MotsJeu $motsJeux): self
+    {
+        if ($this->motsJeux->removeElement($motsJeux)) {
+            // set the owning side to null (unless already changed)
+            if ($motsJeux->getMot() === $this) {
+                $motsJeux->setMot(null);
             }
         }
 
