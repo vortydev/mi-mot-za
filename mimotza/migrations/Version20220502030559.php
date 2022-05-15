@@ -46,6 +46,16 @@ final class Version20220502030559 extends AbstractMigration
         $this->addSql('ALTER TABLE thread ADD CONSTRAINT FK_31204C83F6F093FE FOREIGN KEY (id_message_id) REFERENCES message (id)');
         $this->addSql('ALTER TABLE utilisateur ADD CONSTRAINT FK_1D1C63B389E8BDC FOREIGN KEY (id_role_id) REFERENCES role (id)');
         $this->addSql('ALTER TABLE utilisateur ADD CONSTRAINT FK_1D1C63B376158423 FOREIGN KEY (id_statut_id) REFERENCES statut (id)');
+
+        $this->addSql('INSERT INTO `role` (`id`, `role`)
+        VALUES (1, "Administrateur"),
+                (2, "Utilisateur")');
+        $this->addSql('INSERT INTO `statut` (`id`, `statut`)
+        VALUES (1, "Inactif"),
+                (2, "Actif"),
+                (3, "Banni")');
+        $this->addSql('INSERT INTO `utilisateur` (`id`, `id_role_id`, `id_statut_id`, `username`, `email`, `mdp`, `nom`, `prenom`, `avatar`, `date_creation`) VALUES (7, 2, 2, "admin", "admin@mimotza.ca", "'. (password_hash("admin", PASSWORD_DEFAULT)) .'", "Administrateur", "Admin", "https://imgur.com/E1wbuSQ.png", "'.date("Y-m-d H:i:s").'")');
+        $this->addSql('ALTER TABLE utilisateur CHANGE mdp mdp VARCHAR(255) NOT NULL');
     }
 
     public function down(Schema $schema): void
