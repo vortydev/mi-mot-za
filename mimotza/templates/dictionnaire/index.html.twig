@@ -18,22 +18,26 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
 ****************************************/-->
 
 <main>
-    {% if app.flashes('action') %}
-        <script>
-            {# sendEvent(1, 1, "test"); #}
-        </script>
-    {% endif %}
+   
+
     
     <h1 class="wordTitle">Gestionnaire des mots</h1>
     
     <h2 class="wordAddSubtitle">Ajout de mots</h2>
     <section class="wordAddForm">
-        
-        {% for message in app.session.flashbag.get('action') %}
+        {% for message in app.session.flashbag.get('addition') %}
             <h3>{{ message }}</h3>
+            <script>
+                 sendEvent({{app.user.id}}, 12, "Un mot a été ajouté par un administrateur le : [date]"); 
+            </script>
         {% endfor %}
-        
         {{ form(form) }}
+        {% for message in app.session.flashbag.get('supprimer') %}
+        <h3>{{ message }}</h3>
+            <script>
+                 sendEvent({{app.user.id}}, 13, "Un mot a été supprimé par un administrateur le : [date]"); 
+            </script>
+    {% endfor %}
     </section>
 
     <h2 class="wordDicSubtitle">Mots dans le dictionnaire</h2>
@@ -50,13 +54,18 @@ Date: 26/04/2022 Nom: Étienne Ménard Description: Application du CSS
     <h2 class="wordPropSubtitle">Mots proposés</h2>
     <section class="flexWordProp">
 
-    {% if app.flashes('delete') %}
-        <script>
-            {# sendEvent(1, 1, "testdelete"); #}
-        </script>
-    {% endif %}
-    {% for message in app.session.flashbag.get('action') %}
+  
+    {% for message in app.session.flashbag.get('accepter') %}
         <h3>{{ message }}</h3>
+            <script>
+                 sendEvent({{app.user.id}}, 12, "Un mot a été accepté par un administrateur le : [date]"); 
+            </script>
+    {% endfor %}
+    {% for message in app.session.flashbag.get('refuser') %}
+        <h3>{{ message }}</h3>
+            <script>
+                 sendEvent({{app.user.id}}, 13, "Un mot a été réfusé par un administrateur le : [date]"); 
+            </script>
     {% endfor %}
     
     {% for element in listeMotsSuggere %}

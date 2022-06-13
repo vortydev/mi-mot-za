@@ -19,6 +19,7 @@ final class Version20220502030559 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        /*
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE etat_suggestion (id INT AUTO_INCREMENT NOT NULL, etat VARCHAR(32) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE evenement (id INT AUTO_INCREMENT NOT NULL, event VARCHAR(64) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
@@ -46,6 +47,7 @@ final class Version20220502030559 extends AbstractMigration
         $this->addSql('ALTER TABLE thread ADD CONSTRAINT FK_31204C83F6F093FE FOREIGN KEY (id_message_id) REFERENCES message (id)');
         $this->addSql('ALTER TABLE utilisateur ADD CONSTRAINT FK_1D1C63B389E8BDC FOREIGN KEY (id_role_id) REFERENCES role (id)');
         $this->addSql('ALTER TABLE utilisateur ADD CONSTRAINT FK_1D1C63B376158423 FOREIGN KEY (id_statut_id) REFERENCES statut (id)');
+        */
     }
 
     public function down(Schema $schema): void

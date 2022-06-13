@@ -53,7 +53,7 @@ class UserController extends AbstractController
     /**
     *  @Security("is_granted('ROLE_ADMIN')")
     */
-    public function index(ManagerRegistry $regis,$page=1): Response
+    public function index(ManagerRegistry $regis, $page=1): Response
     {
 
         $formRecherche=$this->createFormBuilder()
@@ -263,6 +263,90 @@ class UserController extends AbstractController
         }
     }
 
+    #[Route('/loginAPI', name: 'loginAPI')]
+    public function loginAPI(Request $request, ManagerRegistry $doctrine): Response {
+        if($request->isMethod('post')){
+            $post = $request->request->all();
+            $entityManager = $doctrine->getManager();
+            $userManager = $entityManager->getRepository(Utilisateur::class);
+
+            $userCheck = $userManager->findOneBy(['username' => $post['username']]);
+
+            //si username valide, verifie si le mdp est valide, verifie si utilisateur banni
+            if ($userCheck != null){
+                if ($userCheck->getIdStatut()->getId() == 3){
+                    $response = new Response();
+                    $response->setStatusCode(403);
+                }else{
+                    if (password_verify($post['mdp'], $userCheck->getMdp())) {
+                        $query = $entityManager->createQueryBuilder();
+
+                        $query->update('App\Entity\Utilisateur','user');
+                        $query->set('user.idStatut',':statut');
+                        $query->setParameter('statut',2);
+
+                        $query->where('user.username LIKE :username');
+                        $query->setParameter('username',$userCheck->getUsername());
+        
+                        $query->getQuery()->execute();
+
+                        $response = new Response();
+                        $response->setContent("{'idOrigin':'".$userCheck->getId()."', 'prenom':'".$userCheck->getPrenom()."', 'nom':'".$userCheck->getNom()."','username':'".$userCheck->getUsername()."'}");
+                        $response->setStatusCode(200);
+                    }else {
+                        $response = new Response();
+                        $response->setStatusCode(401);
+                    }
+                }
+            }else {
+                $response = new Response();
+                $response->setStatusCode(416);
+            }
+            return $response;
+        }
+    }
+
+    #[Route('/adduserAPI', name: 'adduserAPI')]
+    public function addUserAPI(Request $request, ManagerRegistry $doctrine): Response {
+
+        if($request->isMethod('post')){
+            $post = $request->request->all();
+            $entityManager = $doctrine->getManager();
+            $roleManager = $entityManager->getRepository(Role::class);
+            $statutManager = $entityManager->getRepository(Statut::class);
+            $userManager = $entityManager->getRepository(Utilisateur::class);
+            $roleUsager = $roleManager->findOneBy(['role' => 'Usager']);
+            $statutInactif = $statutManager->findOneBy(['id' => 1]);
+
+            $emailCheck = $userManager->findOneBy(['email' => $post['email']]);
+            $usernameCheck = $userManager->findOneBy(['username' => $post['username']]);
+
+            if ($emailCheck == null && $usernameCheck == null) {
+                $user = new Utilisateur();
+                    // load user data
+                $user->setPrenom($post['prenom'])
+                ->setNom($post['nom'])
+                ->setEmail($post['email'])
+                ->setUsername($post['username'])
+                ->setMdp(password_hash($post['mdp'], PASSWORD_DEFAULT))
+                ->setIdRole($roleUsager)
+                ->setIdStatut($statutInactif)
+                ->setAvatar(null)
+                ->setDateCreation(date_create_from_format('Y-m-d H:i:s', date('Y-m-d H:i:s')));
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                $response = new Response();
+                $response->setStatusCode(200);
+            } else {
+                $response = new Response();
+                $response->setStatusCode(416);
+            }
+            return $response;
+
+        }
+    }
+
     #[Route('/adduser', name: 'adduser')]
     public function addUser(Request $request, ManagerRegistry $doctrine): Response {
         // get post TEMP
@@ -366,5 +450,48 @@ class UserController extends AbstractController
     public function addUserFile(Request $request, ManagerRegistry $doctrine): Response {
         return $this->render('user/index.html.twig');
     }
+<<<<<<< HEAD
     
+=======
+    #[Route('/userProfile', name: 'userPrifleAPI')]
+    public function userProfileAPI(Request $request, ManagerRegistry $doctrine ): Response {
+        $response = new Response();
+        if($request->isMethod('post')){
+            $post = $request->request->all();
+            $username = $post['username'];
+            $userRepository = $doctrine->getRepository(Utilisateur::class);
+            $user = $userRepository->findOneBy(['username'=>$username]);
+            $partieRepository =  $doctrine->getRepository(Partie::class);
+            $partiesJoue = $partieRepository->findBy(array('idUser' => $user->getId()));
+            $tempsJoue = new \DateTime('0000-01-01 0:0:0');
+            $nbWin = 0;
+            foreach($partiesJoue as $partie){
+                $tempsJoue->add($partie->getTemps()->format('H:i:s'));
+                if($partie->getWin()){
+                    $nbWin = $nbWin + 1;
+                }
+            }
+            if($user){
+                $json = array();
+                $json[$username] = array();
+                $json[$username]['idOrigin']=$user->getId();
+                $json[$username]['parties']=count($partiesJoue);
+                $json[$username]['partiesWin']=$nbWin;
+                $json[$username]['tempsJoue']=$tempsJoue->format('H:i:s');
+                $json[$username]['date']=$user->getDateCreation()->format('d/m/y');
+                $json[$username]['img']= $user->getAvatar();
+                $jsonText = json_encode($json);
+                $response->setContent($jsonText);
+                $response->headers->set('Content-Type','application/json');
+                $response->setStatusCode(200);
+            }else{
+                //
+                $response->setStatusCode(416);
+            }
+        }else{
+            $response->setStatusCode(500);
+        }
+        return $response;
+    }
+>>>>>>> 035f50aec16d06f4e81900f570007a29e491ef29
 }

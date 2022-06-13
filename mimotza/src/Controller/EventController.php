@@ -186,42 +186,13 @@ class EventController extends AbstractController
                     break;
                 case 9:         // Partie
 
-                    $post = $request->request->all();
-
-                    if (isset($post)
-                    && isset($post['win'])
-                    && isset($post['score'])
-                    && isset($post['temps'])
-                    && isset($post['mot'])) {
-
-                        $date = date('Y-m-d H:i:s');
-                        $motRepos = $entityManager->getRepository(Mot::class);
-                        $mot = $motRepos->findOneBy(['id' => $post['mot']]);
-                        
-                        if (isset($mot)) {
-                            $partie = new Partie;
-
-                            $partie->setIdUser($user)
-                            ->setWin($post['win'])
-                            ->setScore($post['score'])
-                            ->setTemps(date_create_from_format('Y-m-d H:i:s', $post['temps']))
-                            ->setDateEmission(date_create_from_format('Y-m-d H:i:s', $date))
-                            ->setMot($mot);
-
-                            $entityManager->persist($partie);
-
-                            $entityManager->flush();
-
-                            return $this->render('event/redirect.html.twig', [
-                                'user' => $user,
-                                'eventType' => $eventType,
-                                'whereTo' => $whereTo,
-                                'win' => $post['win'],
-                                'mot' => $mot
-                            ]);
-                        }
-                    }
-                    exit;
+                    /*return $this->render('event/redirect.html.twig', [
+                    'user' => $user,
+                    'eventType' => $eventType,
+                    'whereTo' => $whereTo,
+                    'win' => $post['win'],
+                    'mot' => $mot
+                    ]);*/
                     break;
                 case 10:        // Ajout Langue
                     break;

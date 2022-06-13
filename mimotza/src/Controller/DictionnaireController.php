@@ -20,6 +20,7 @@ Historique de modifications :
 ****************************************/
 
 use App\Entity\Mot;
+use App\Entity\MotsJeu;
 use App\Entity\Langue;
 use App\Entity\Suggestion;
 use App\Entity\EtatSuggestion;
@@ -67,7 +68,7 @@ class DictionnaireController extends AbstractController
                 $em->persist($mot);
                 $em->flush();
                 $session = $request->getSession();
-                $session->getFlashBag()->add('action', "Le mot : ".$mot->getMot()."a été ajouté");
+                $session->getFlashBag()->add('addition', "Le mot : ".$mot->getMot()."a été ajouté");
               
 
                 return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
@@ -101,7 +102,7 @@ class DictionnaireController extends AbstractController
         $etat = $etatrepo->findBy(array('etat' => 'Refusé'));
         $suggestion->setIdEtatSuggestion($etat[0]);
         $session = $request->getSession();
-        $session->getFlashBag()->add('delete', "le mot suggèré : ".$suggestion->getMotSuggere()." a été réfusé");
+        $session->getFlashBag()->add('refuser', "le mot suggèré : ".$suggestion->getMotSuggere()." a été réfusé");
         //$em->remove($suggestion);
         $em->flush();
         return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
@@ -145,7 +146,7 @@ class DictionnaireController extends AbstractController
             $mot->setMot(strtoupper($suggestion->getMotSuggere()));
             $em->persist($mot);
             $em->flush();
-            $session->getFlashBag()->add('delete', "le mot suggeré : ".$suggestion->getMotSuggere()." a été accepté");
+            $session->getFlashBag()->add('accepter', "le mot suggeré : ".$suggestion->getMotSuggere()." a été accepté");
         }
         return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
     }
@@ -244,13 +245,123 @@ class DictionnaireController extends AbstractController
         $idMot = $_GET['idMot'];
         $mot=$doctrine->getRepository(Mot::class)->find($idMot);
         $em=$doctrine->getManager();
-        $session->getFlashBag()->add('action', "le mot : ".$mot->getMot()." a été accepté");
-
+        $session->getFlashBag()->add('supprimer', "le mot : ".$mot->getMot()." a été supprimé");
         $em->remove($mot);
         $em->flush();
 
         return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
     
     }
+
+    #[Route('/ajoutPartie', name: 'ajoutPartie')]
+    public function ajoutPartie(ManagerRegistry $doctrine, Request $request) : Response {
+
+        $response = new Response();
+        $post = $request->request->all();
+
+        if (isset($post)
+        && isset($post['win'])
+        && isset($post['score'])
+        && isset($post['temps'])
+        && isset($post['mot'])) {
+
+            $entityManager = $doctrine->getManager();
+            $date = date('Y-m-d H:i:s');
+            $motRepos = $entityManager->getRepository(Mot::class);
+            $userRepos = $entityManager->getRepository(Utilisateur::class);
+            $mot = $motRepos->findOneBy(['id' => $post['mot']]);
+            $user = $userRepos->findOneBy(['id' => $post['idUser']]);
+            if (isset($mot) && isset($user)) {
+
+                try {
+                    $partie = new Partie;
+
+                    $partie->setIdUser($user)
+                    ->setWin($post['win'])
+                    ->setScore($post['score'])
+                    ->setTemps(date_create_from_format('H:i:s', $post['temps']))
+                    ->setDateEmission(date_create_from_format('Y-m-d H:i:s', $date))
+                    ->setMot($mot);
+
+                    $entityManager->persist($partie);
+
+                    $entityManager->flush();
+                    $response->setStatusCode(200);
+                    return $response;
+                } catch (Exception $e) {
+                    echo "Erreur pendant la sauvegarde de la partie.";
+                    $response->setStatusCode(400);
+                }
+            }
+            else {
+                echo "Erreur: Mot ou utilisateur inexistant";
+                $response->setStatusCode(400);
+            }
+        }
+        else {
+            $response->setStatusCode(400);
+        }
+        return $response;
+    }
+
+    #[Route('/GenererMotJouer', name: 'GenererMotJouer')]
+    public function GenererMotJouer(ManagerRegistry $doctrine, Request $request) : Response {
+        $em=$doctrine->getManager();
+        $motsRepos = $em->getRepository(Mot::class);
+        $mots = $motsRepos->findAll();
+        $motsjeu = $em->getRepository(MotsJeu::class)->findAll();
+
+       
+        $date = $motsjeu[count($motsjeu)-1]->getDate();
+        $date->modify('+1 day');
+        for($i=0; $i < 200; $i++){
+            $motJeu = new MotsJeu;
+            $motJeu->setMot($mots[rand(0,count($mots) - 1)]);
+            $motJeu->setDate($date);
+            $em->persist($motJeu);
+            $em->flush();
+            $date->modify('+1 day');
+        }
+        return $this->redirect($this->generateURL('accueil_gestionDuJeu'));
+
+    }
+
+    #[Route('/syncMotJeu', name: 'syncMotJeu')]
+    public function syncMotJeu(ManagerRegistry $doctrine, Request $request) : Response {
+        $date = new \DateTime('2022-05-19');
     
+        
+        $em=$doctrine->getManager();
+        $motsjeu = $em->getRepository(MotsJeu::class)->findBy(array('date' => $date));
+        
+        $idMotJeu = $motsjeu[0]->getId();
+      
+        $json = array();
+        for($i=$idMotJeu;$i>$idMotJeu - 5 && $i > 0;$i--){
+            $motJeu = $em->getRepository(MotsJeu::class)->find($i);
+            $motDuJour =  $motJeu->getMot();
+            
+            array_push($json,array(
+                'idmot' => $motDuJour->getId(),
+                'mot'=>$motDuJour->getMot(),
+                'date'=>$motJeu->getDate()->format('Y-m-d')
+
+            ));
+            
+        }
+        $response = new Response;
+        $jsonText = json_encode($json);
+        $response->setContent($jsonText);
+        $response->headers->set('Content-Type','application/json');
+        $response->setStatusCode(200);
+        
+        return $response;
+    }
 }
+
+
+
+
+
+
+
