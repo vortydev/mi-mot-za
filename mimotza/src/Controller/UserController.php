@@ -104,6 +104,52 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/userProfile', name: 'userPrifleAPI')]
+    public function userProfileAPI(Request $request, ManagerRegistry $doctrine ): Response {
+        $response = new Response();
+        if($request->isMethod('post')){
+            $post = $request->request->all();
+            $username = $post['username'];
+            $userRepository = $doctrine->getRepository(Utilisateur::class);
+            $user = $userRepository->findOneBy(['username'=>$username]);
+            $partieRepository =  $doctrine->getRepository(Partie::class);
+            $partiesJoue = $partieRepository->findBy(array('idUser' => $user->getId()));
+            $tempsJoue = new \DateTime('0000-01-01 0:0:0');
+            $nbWin = 0;
+            foreach($partiesJoue as $partie){
+                $tempsJoue->add($partie->getTemps()->format('H:i:s'));
+                
+                if($partie->getWin()){
+                    $nbWin = $nbWin + 1;
+                }
+            }
+      
+
+            if($user){
+                $json = array();
+                $json[$username] = array();
+                $json[$username]['idOrigin']=$user->getId();
+                $json[$username]['parties']=count($partiesJoue);
+                $json[$username]['partiesWin']=$nbWin;
+                $json[$username]['tempsJoue']=$tempsJoue->format('H:i:s');
+                $json[$username]['date']=$user->getDateCreation()->format('H:i:s');
+            
+                $jsonText = json_encode($json);
+                $response->setContent($jsonText);
+                $response->headers->set('Content-Type','application/json');
+                $response->setStatusCode(200);
+                
+            }else{
+                //
+                $response->setStatusCode(416);
+            
+            }
+        }else{
+            $response->setStatusCode(500);
+        }
+        return $response;
+    }
+
     #[Route('/user/{id}', name: 'particular_user')]
     /**
     *  @Security("is_granted('ROLE_ADMIN')")
@@ -320,49 +366,5 @@ class UserController extends AbstractController
     public function addUserFile(Request $request, ManagerRegistry $doctrine): Response {
         return $this->render('user/index.html.twig');
     }
-    #[Route('/userProfile', name: 'userPrifleAPI')]
-    public function userProfileAPI(Request $request, ManagerRegistry $doctrine ): Response {
-        $response = new Response();
-        if($request->isMethod('post')){
-            $post = $request->request->all();
-            $username = $post['username'];
-            $userRepository = $doctrine->getRepository(Utilisateur::class);
-            $user = $userRepository->findOneBy(['username'=>$username]);
-            $partieRepository =  $doctrine->getRepository(Partie::class);
-            $partiesJoue = $partieRepository->findBy(array('idUser' => $user->getId()));
-            $tempsJoue = new \DateTime('0000-01-01 0:0:0');
-            $nbWin = 0;
-            foreach($partiesJoue as $partie){
-                $tempsJoue->add($partie->getTemps()->format('H:i:s'));
-                
-                if($partie->getWin()){
-                    $nbWin = $nbWin + 1;
-                }
-            }
-      
-
-            if($user){
-                $json = array();
-                $json[$username] = array();
-                $json[$username]['idOrigin']=$user->getId();
-                $json[$username]['parties']=count($partiesJoue);
-                $json[$username]['partiesWin']=$nbWin;
-                $json[$username]['tempsJoue']=$tempsJoue->format('H:i:s');
-                $json[$username]['date']=$user->getDateCreation()->format('H:i:s');
-            
-                $jsonText = json_encode($json);
-                $response->setContent($jsonText);
-                $response->headers->set('Content-Type','application/json');
-                $response->setStatusCode(200);
-                
-            }else{
-                //
-                $response->setStatusCode(416);
-            
-            }
-        }else{
-            $response->setStatusCode(500);
-        }
-        return $response;
-    }
+    
 }
